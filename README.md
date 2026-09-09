@@ -96,6 +96,9 @@ build-logic/        two convention plugins
 **[docs/architecture.md](docs/architecture.md)** — which tier a class is, where the file goes, the
 ViewModel contract, and what `:archtest` will reject. It is short.
 
+**[docs/upgrade-notes.md](docs/upgrade-notes.md)** — the version-sensitive build facts, each of which
+cost a failed build to establish. Read it before bumping Kotlin, AGP, Gradle or Compose.
+
 ## What was deliberately left out
 
 Add when you need it, not before:

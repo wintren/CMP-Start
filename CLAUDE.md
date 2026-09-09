@@ -5,7 +5,8 @@ Kotlin Multiplatform / Compose Multiplatform starter. Android, iOS, Desktop (JVM
 > Verify library APIs against `gradle/libs.versions.toml` and the actual code — do not guess from
 > training data. This project runs versions newer than most training cutoffs.
 
-Keep this file short. Depth belongs in `docs/architecture.md`.
+Keep this file short. Depth belongs in `docs/architecture.md` (conventions) and
+`docs/upgrade-notes.md` (version-sensitive build facts — read before bumping Kotlin, AGP or CMP).
 
 ## Before acting
 
