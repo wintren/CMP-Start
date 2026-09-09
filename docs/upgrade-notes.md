@@ -54,6 +54,11 @@ throws `AbstractMethodError` on foundation 1.12 the first time an `OutlinedTextF
 check for any compose + wasmJs module and fails on the missing `binaries.executable()`, even though
 this module deliberately produces no artifact (the executable is `:launch:web`). See CMP-4906.
 
+**Warnings are errors**, set once in the root `build.gradle.kts` for every subproject. A Kotlin,
+AGP or CMP bump deprecates things in batches, so build with `-PlenientWarnings` while you migrate
+and drop the flag before you commit — that is the difference between reading the warnings once and
+never reading them.
+
 **`org.gradle.parallel` and `configureondemand` are off** because of the wasmJs target (KT-52074).
 Turn them on if you drop web.
 

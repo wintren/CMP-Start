@@ -70,6 +70,12 @@ part of the job.
     when the level is filtered. Pass a `tag` in anything you will debug on iOS or wasm; those
     targets have no call site, because taking one there is expensive. See `docs/architecture.md`.
 16. **Fix what you touch.** No drive-by refactors.
+17. **Time comes from an injected `Clock`.** `clock.today()`, `thisWeek()` and the rest live in
+    `core/common/time/`. `Clock.System` is bound once in `coreCommonModule` and `:archtest` fails
+    it anywhere else; tests pass a `FixedClock`.
+18. **No environment literal in code.** Base URLs, flags and tokens are keys in
+    `config/<env>.properties`, read as `AppConfig.<key>`. Adding a key means adding it to all three
+    files. Secrets come from `local.properties` or `APP_*` — never from git.
 
 ## Verify before you claim done
 

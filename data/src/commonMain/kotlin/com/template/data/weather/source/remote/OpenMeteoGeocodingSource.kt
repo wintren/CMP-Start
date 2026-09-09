@@ -1,5 +1,6 @@
 package com.template.data.weather.source.remote
 
+import com.template.core.common.config.AppConfig
 import com.template.data.weather.source.remote.dto.GeocodingResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -17,7 +18,7 @@ internal class OpenMeteoGeocodingSource(private val client: HttpClient) {
         }.body()
 
     private companion object {
-        const val GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
+        val GEOCODING_URL = "${AppConfig.geocodingBaseUrl}/search"
         const val RESULT_LIMIT = 10
     }
 }

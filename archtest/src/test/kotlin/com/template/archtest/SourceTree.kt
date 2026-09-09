@@ -32,7 +32,7 @@ data class KotlinSource(
 
 object SourceTree {
 
-    private val repoRoot: File = File(System.getProperty("repoRoot") ?: ".")
+    val repoRoot: File = File(System.getProperty("repoRoot") ?: ".")
 
     private val ignoredDirectories = setOf("build", ".gradle", ".git", ".kotlin", "build-logic")
 

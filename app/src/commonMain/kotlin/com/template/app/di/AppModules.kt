@@ -23,7 +23,7 @@ private val uiModule = module {
     viewModelOf(::BestDayViewModel)
     // Takes a runtime argument, so it cannot use `viewModelOf`.
     viewModel { parameters ->
-        ForecastViewModel(parameters.get(), get(), get(), get(), get())
+        ForecastViewModel(parameters.get(), get(), get(), get(), get(), get())
     }
 }
 

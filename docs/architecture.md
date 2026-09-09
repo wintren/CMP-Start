@@ -263,6 +263,25 @@ return `null` — symbolicating is expensive on Native, and wasm frames name com
 debuggable flag, and `HttpClientFactory` defaults its request logging to `Log.isDebug`. `Log.onLog`
 is the hook for a second destination — crash-reporter breadcrumbs, an in-app viewer, a recorder.
 
+## Configuration
+
+Nothing that varies by environment is written in code. `config/<env>.properties` declares the keys,
+`-Penv=<name>` picks the file, `local.properties` and `APP_*` environment variables override any of
+them, and `:core:common` generates `AppConfig` from the result — so a base URL or a token is
+`AppConfig.apiBaseUrl`, and neither one is ever in git. `:archtest` fails a key that is declared
+for one environment and not the others, for the same reason it fails a missing translation. The how-to, and the honest limit of what
+that protects, is under "Configuration" in README.md.
+
+## Time
+
+`Clock` is injected. `Clock.System` is bound once, in `coreCommonModule`, and `:archtest` fails it
+anywhere else; a ViewModel or UseCase that needs the date takes a `Clock` and calls `clock.today()`
+from `core/common/time/`. Tests pass a `FixedClock`, which is the whole point — a screen that
+formats "Today" against the machine's date is a test that passes until the day it doesn't.
+
+Pure `logic` in `:domain` is stricter still: it takes the date as a parameter and never sees a
+clock at all.
+
 ## Errors
 
 **Throw** from `:domain` and `:data`. **Catch in the ViewModel** and map to state. No `Result` or
@@ -281,7 +300,7 @@ why it is the one that catches.
 | `:design`           | Theme and components. The only design system.                               |
 | `:domain`           | Pure business layer. No Compose, no Android, no `:data`.                    |
 | `:data`             | Repository impls, Sources, Clients, mappers.                                |
-| `:core:common`      | Flows/`combines`, logging, key-value storage. No Compose.                   |
+| `:core:common`      | Flows/`combines`, logging, time, `AppConfig`, key-value storage. No Compose. |
 | `:core:ui`          | ViewModel base, `StringValue`, state collection.                            |
 | `:di`               | Aggregation only, so `:app` never depends on `:data`.                       |
 | `:archtest`         | Source-scanning enforcement of this document.                               |
@@ -319,13 +338,14 @@ the cost: it cannot know the app's navigator, so the host passes `onBack` in
 - the UI lane importing `:data`; a feature importing another feature
 - DTOs or Sources escaping `:data`
 - a type named `…Service`; a non-`internal` `…RepositoryImpl`
-- domain `logic/` reading a clock or randomness
+- domain `logic/` reading a clock or randomness; `Clock.System` outside the Koin binding
 - a ViewModel that does not use `viewModelState`, or that exposes mutable state
 - a `Screen` taking a ViewModel, or importing a repository or use case
 - a central `di/` package in `:domain` or `:data`
 - a hex colour outside `design/theme/`, a bare `Text` outside `:design`, a literal `dp` in a screen
 - a design component with no `@Preview` or no `…Showcase()`
 - a string key present in `values/` but missing from `values-sv/` or `values-es/`, or vice versa
+- a config key declared in one `config/<env>.properties` and not in the others
 
 Text is a coarse tool. It is also a rule you can read in ten lines, which is a rule people keep.
 Add a test when you find yourself explaining a convention twice.

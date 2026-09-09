@@ -10,6 +10,7 @@ import com.template.app.fake.geoLocation
 import com.template.app.navigation.Destination
 import com.template.app.text
 import com.template.app.weather.bestday.BestDayModels.Action
+import com.template.core.common.time.FixedClock
 import com.template.domain.weather.logic.RankDaysByComfort
 import com.template.domain.weather.logic.RankSavedLocationDays
 import com.template.domain.weather.logic.ScoreDayComfort
@@ -46,6 +47,9 @@ class BestDayViewModelTest {
     private val preferencesRepository = FakePreferencesRepository()
     private val navControls = RecordingNavControls()
 
+    /** Pins "today" to the first of the two forecast days, so the labels are assertable. */
+    private val clock = FixedClock(coolDay.date)
+
     @BeforeTest
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
 
@@ -62,6 +66,7 @@ class BestDayViewModelTest {
         forecastRepository = forecastRepository,
         preferencesRepository = preferencesRepository,
         navControls = navControls,
+        clock = clock,
     )
 
     /** Keeps `stateFlow` hot for the test, the way a visible screen would. */
@@ -149,6 +154,16 @@ class BestDayViewModelTest {
         backgroundScope.subscribe(viewModel)
 
         assertTrue(viewModel.state.error != null, "the ViewModel is the layer that catches")
+    }
+
+    @Test
+    fun `the day label comes from the injected clock`() = runTest(UnconfinedTestDispatcher()) {
+        forecastRepository.emit(forecast(days = listOf(coolDay, warmDay)))
+        val viewModel = viewModel()
+        backgroundScope.subscribe(viewModel)
+
+        assertEquals("day_today", viewModel.state.ranked.first { it.key.endsWith("${coolDay.date}") }.dayLabel.text())
+        assertEquals("day_tomorrow", viewModel.state.ranked.first { it.key.endsWith("${warmDay.date}") }.dayLabel.text())
     }
 
     @Test

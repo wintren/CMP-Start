@@ -1,5 +1,6 @@
 package com.template.data.weather.source.remote
 
+import com.template.core.common.config.AppConfig
 import com.template.data.weather.source.remote.dto.ForecastResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -23,7 +24,7 @@ internal class OpenMeteoForecastSource(private val client: HttpClient) {
         }.body()
 
     private companion object {
-        const val FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
+        val FORECAST_URL = "${AppConfig.apiBaseUrl}/forecast"
         const val CURRENT_FIELDS = "temperature_2m,weather_code,wind_speed_10m"
         const val DAILY_FIELDS =
             "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum," +

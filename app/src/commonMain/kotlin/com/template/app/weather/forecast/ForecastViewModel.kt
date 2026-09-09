@@ -15,6 +15,7 @@ import com.template.app.weather.format.asWindSpeed
 import com.template.app.weather.format.label
 import com.template.core.common.flow.combines
 import com.template.core.common.logging.Log
+import com.template.core.common.time.today
 import com.template.core.ui.resource.StringValue
 import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
@@ -31,8 +32,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
 class ForecastViewModel(
@@ -41,6 +40,7 @@ class ForecastViewModel(
     private val forecastRepository: ForecastRepository,
     private val preferencesRepository: PreferencesRepository,
     private val navControls: NavControls,
+    private val clock: Clock,
 ) : StateViewModel<State>(), WithActions<Action> {
 
     private data class Local(val error: StringValue? = null)
@@ -60,7 +60,7 @@ class ForecastViewModel(
         },
         state = { (local, location, forecast, units) ->
             // Read once per emission and pass it down, so the formatting functions stay pure.
-            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val today = clock.today()
             State(
                 title = location?.name?.let(StringValue::Raw) ?: StringValue.Empty,
                 region = location.regionLabel(),

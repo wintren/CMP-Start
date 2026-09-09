@@ -11,6 +11,7 @@ import com.template.app.weather.format.asDayLabel
 import com.template.app.weather.format.asTemperatureValue
 import com.template.core.common.flow.combines
 import com.template.core.common.logging.Log
+import com.template.core.common.time.today
 import com.template.core.ui.resource.StringValue
 import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
@@ -27,8 +28,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
 /**
@@ -41,6 +40,7 @@ class BestDayViewModel(
     private val forecastRepository: ForecastRepository,
     private val preferencesRepository: PreferencesRepository,
     private val navControls: NavControls,
+    private val clock: Clock,
 ) : StateViewModel<State>(), WithActions<Action> {
 
     private data class Local(
@@ -63,7 +63,7 @@ class BestDayViewModel(
             )
         },
         state = { (current, ranked, units) ->
-            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val today = clock.today()
             State(
                 activity = current.activity,
                 ranked = ranked.map { it.toRankedItem(today, units) },

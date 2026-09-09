@@ -25,7 +25,7 @@ tasks.test {
      */
     inputs.files(
         rootProject.fileTree(rootProject.layout.projectDirectory) {
-            include("**/*.kt", "**/composeResources/**/strings.xml")
+            include("**/*.kt", "**/composeResources/**/strings.xml", "config/*.properties")
             exclude("**/build/**", "**/.gradle/**", "**/.git/**", "**/.kotlin/**", "build-logic/**")
         },
     )

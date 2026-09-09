@@ -1,12 +1,16 @@
 package com.template.data.network
 
+import com.template.core.common.config.AppConfig
 import com.template.core.common.logging.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -16,15 +20,20 @@ import kotlinx.serialization.json.Json
  */
 object HttpClientFactory {
 
-    /**
-     * @param logRequests logs every URL and header. Defaults to [Log.isDebug]; `commonMain` has
-     * no build-config flag to read, and `true` here would ship the request log.
-     */
-    fun create(json: Json, logRequests: Boolean = Log.isDebug): HttpClient = HttpClient {
+    /** @param logRequests logs every URL and header. Off outside dev — see config/prod.properties. */
+    fun create(json: Json, logRequests: Boolean = AppConfig.logRequests): HttpClient = HttpClient {
         expectSuccess = true
 
         install(ContentNegotiation) {
             json(json)
+        }
+
+        // Empty on the free Open-Meteo tier. Here as the worked example of a secret that arrives
+        // from local.properties or APP_API_TOKEN rather than from the repository.
+        if (AppConfig.apiToken.isNotBlank()) {
+            defaultRequest {
+                header(HttpHeaders.Authorization, "Bearer ${AppConfig.apiToken}")
+            }
         }
 
         install(HttpTimeout) {
