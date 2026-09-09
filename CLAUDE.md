@@ -57,6 +57,8 @@ part of the job.
     - **Undo.** Would a senior developer, reading only the code, change it for the worse? That is
       the only thing that earns a comment: an ordering constraint, a non-obvious side effect, a
       workaround, a decision that looks wrong until you know what broke.
+    State what the thing *is*, not why it isn't something else. Caveats belong on the `actual` or
+    the branch that has them, not on the declaration everyone reads.
     One line. Two if it earns it. Longer *only* for a decision a reader would otherwise undo, and
     then state what breaks and the issue reference — not the reasoning. Type-level KDoc only when
     the type is genuinely complex or overloaded. No usage examples in code, and no `@param`/
