@@ -1,0 +1,55 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    // AGP 9 has built-in Kotlin support — the `org.jetbrains.kotlin.android` plugin is gone.
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+}
+
+android {
+    namespace = "com.template.launch.android"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    defaultConfig {
+        applicationId = "com.template.app"
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "1.0.0"
+    }
+
+    buildTypes {
+        debug { applicationIdSuffix = ".debug" }
+        release {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    buildFeatures { compose = true }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions { jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvm.get())) }
+}
+
+dependencies {
+    implementation(projects.app)
+    implementation(projects.di)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.koin.android)
+    implementation(libs.koin.core)
+    implementation(libs.compose.ui.tooling.preview)
+    // Preview renderer. Lives here rather than in :design because the KMP Android library plugin
+    // is single-variant and has no debug-only configuration to scope it to.
+    debugImplementation(libs.compose.ui.tooling)
+}

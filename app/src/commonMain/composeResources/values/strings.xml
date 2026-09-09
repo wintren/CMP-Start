@@ -1,0 +1,14 @@
+<resources>
+    <string name="locations_title">Places</string>
+    <string name="locations_search_placeholder">Search for a city</string>
+    <string name="locations_empty_title">No places yet</string>
+    <string name="locations_empty_body">Search for a city above to start tracking its forecast.</string>
+
+    <string name="forecast_title">Forecast</string>
+    <string name="forecast_missing">No forecast for this place yet.</string>
+
+    <string name="best_day_title">Best day</string>
+    <string name="best_day_empty_title">Nothing to rank</string>
+    <string name="best_day_empty_body">Add a place and refresh to see which day suits you best.</string>
+    <string name="best_day_activity">Planning for</string>
+</resources>

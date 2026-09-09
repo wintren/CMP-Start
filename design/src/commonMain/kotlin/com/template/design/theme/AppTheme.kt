@@ -1,0 +1,89 @@
+package com.template.design.theme
+
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+
+private val LocalAppColors = staticCompositionLocalOf<AppColors> { error("No AppTheme provided") }
+private val LocalAppTypography = staticCompositionLocalOf<AppTypography> { error("No AppTheme provided") }
+private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing() }
+private val LocalAppShapes = staticCompositionLocalOf { AppShapes() }
+
+/**
+ * Wraps [MaterialTheme] rather than replacing it: M3 still supplies `Scaffold`, ripples, text
+ * selection handles and the rest of the plumbing, and it is fed a colour scheme derived from
+ * [AppColors] so a stray M3 component never renders off-palette.
+ *
+ * Read tokens through the [AppTheme] object — `AppTheme.colors.textSecondary`.
+ */
+@Composable
+fun AppTheme(
+    isDark: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
+) {
+    val colors = remember(isDark) { if (isDark) darkAppColors() else lightAppColors() }
+    val typography = remember { appTypography() }
+
+    CompositionLocalProvider(
+        LocalAppColors provides colors,
+        LocalAppTypography provides typography,
+        LocalAppSpacing provides AppSpacing(),
+        LocalAppShapes provides AppShapes(),
+    ) {
+        MaterialTheme(
+            colorScheme = remember(colors) { colors.toMaterialScheme() },
+            content = content,
+        )
+    }
+}
+
+object AppTheme {
+    val colors: AppColors
+        @Composable @ReadOnlyComposable get() = LocalAppColors.current
+
+    val typography: AppTypography
+        @Composable @ReadOnlyComposable get() = LocalAppTypography.current
+
+    val spacing: AppSpacing
+        @Composable @ReadOnlyComposable get() = LocalAppSpacing.current
+
+    val shapes: AppShapes
+        @Composable @ReadOnlyComposable get() = LocalAppShapes.current
+}
+
+private fun AppColors.toMaterialScheme() = when (isDark) {
+    true -> darkColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        secondary = accent,
+        background = background,
+        onBackground = textPrimary,
+        surface = surface,
+        onSurface = textPrimary,
+        surfaceVariant = surfaceRaised,
+        onSurfaceVariant = textSecondary,
+        outline = outline,
+        error = error,
+        onError = onError,
+    )
+    false -> lightColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        secondary = accent,
+        background = background,
+        onBackground = textPrimary,
+        surface = surface,
+        onSurface = textPrimary,
+        surfaceVariant = surfaceRaised,
+        onSurfaceVariant = textSecondary,
+        outline = outline,
+        error = error,
+        onError = onError,
+    )
+}

@@ -1,0 +1,6 @@
+<resources>
+    <!-- Only the window background before Compose takes over; the app's real theme is AppTheme. -->
+    <style name="Theme.App.Starting" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/background_dark</item>
+    </style>
+</resources>
