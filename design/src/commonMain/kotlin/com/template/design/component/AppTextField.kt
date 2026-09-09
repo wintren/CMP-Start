@@ -5,7 +5,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.template.core.ui.resource.StringValue
+import com.template.core.ui.resource.asValue
 import com.template.core.ui.resource.resolve
 import com.template.design.resources.Res
 import com.template.design.resources.action_clear
@@ -42,7 +42,7 @@ fun AppTextField(
     trailingIcon = {
         if (value.isNotEmpty()) {
             IconButton(onClick = { onValueChange("") }) {
-                Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.action_clear))
+                AppIcon(Icons.Default.Close, description = Res.string.action_clear.asValue())
             }
         }
     },

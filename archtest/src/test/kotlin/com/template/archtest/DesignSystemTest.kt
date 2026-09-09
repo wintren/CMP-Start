@@ -39,6 +39,29 @@ class DesignSystemTest {
         assertTrue(violations.isEmpty(), "Use `AppText`:\n${violations.pretty()}")
     }
 
+    /** Same reason as `Text`: `AppIcon` cannot be called without deciding what to describe. */
+    @Test
+    fun `only the design system draws a raw Icon`() {
+        val violations = SourceTree.all
+            .filterNot { it.module == "design" }
+            .filter { source -> source.imports.any { it == "androidx.compose.material3.Icon" } }
+            .map { it.path }
+        assertTrue(violations.isEmpty(), "Use `AppIcon`, which takes a description:\n${violations.pretty()}")
+    }
+
+    /** A screen reader reads this out, so it is user-visible text like any other. */
+    @Test
+    fun `an icon description is a StringValue, never a literal`() {
+        val violations = SourceTree.all
+            .flatMap { source ->
+                CONTENT_DESCRIPTION_LITERAL.findAll(source.text).map { "${source.path}: ${it.value}" }
+            }
+        assertTrue(
+            violations.isEmpty(),
+            "Pass a `StringValue` and put the words in strings.xml:\n${violations.pretty()}",
+        )
+    }
+
     /** Screens only. A component may hold a literal `dp` — a chip's 2dp inset is local to it. */
     @Test
     fun `screens take their measurements from the theme`() {
@@ -99,5 +122,6 @@ class DesignSystemTest {
 
     private companion object {
         val DP_LITERAL = Regex("""(?<![\w.])\d+(\.\d+)?\.dp\b""")
+        val CONTENT_DESCRIPTION_LITERAL = Regex("contentDescription\\s*=\\s*\"")
     }
 }

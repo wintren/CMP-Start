@@ -13,3 +13,12 @@ kotlin {
         androidResources { enable = true }
     }
 }
+
+/*
+ * None of these modules produce a wasm executable — `:launch:web` does — but the Compose plugin
+ * registers this check for every compose + wasmJs module that has test sources and fails it on the
+ * missing `binaries.executable()`. See CMP-4906 and docs/upgrade-notes.md.
+ */
+tasks.matching { it.name == "checkComposeUiTestConfigurationForWasmJs" }.configureEach {
+    enabled = false
+}

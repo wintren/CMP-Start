@@ -2,9 +2,6 @@ package com.template.app.weather.locations
 
 import com.template.app.navigation.Destination
 import com.template.app.navigation.NavControls
-import com.template.app.resources.Res
-import com.template.app.resources.error_refresh_failed
-import com.template.app.resources.error_search_failed
 import com.template.app.weather.format.asTemperature
 import com.template.app.weather.format.label
 import com.template.app.weather.locations.LocationsModels.Action
@@ -12,9 +9,7 @@ import com.template.app.weather.locations.LocationsModels.PlaceItem
 import com.template.app.weather.locations.LocationsModels.SavedItem
 import com.template.app.weather.locations.LocationsModels.State
 import com.template.core.common.flow.combines
-import com.template.core.common.logging.Log
 import com.template.core.ui.resource.StringValue
-import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
 import com.template.core.ui.viewmodel.WithActions
 import com.template.core.ui.viewmodel.fire
@@ -79,7 +74,9 @@ class LocationsViewModel(
             is Action.OnQueryChange -> onQueryChanged(action.query)
             Action.OnSearchSubmit -> search(state.query)
             is Action.OnAddPlace -> addPlace(action.placeId)
-            is Action.OnRemoveSaved -> fire { locationRepository.remove(action.locationId) }
+            is Action.OnRemoveSaved -> fire(onError = ::reportError) {
+                locationRepository.remove(action.locationId)
+            }
             is Action.OnOpenSaved ->
                 navControls.navigateTo(Destination.Forecast(action.locationId))
             Action.OnRefresh -> refreshAll()
@@ -103,44 +100,37 @@ class LocationsViewModel(
 
     private fun search(query: String) {
         searchJob?.cancel()
-        searchJob = fire {
+        searchJob = fire(
+            onError = { message -> local.update { it.copy(isSearching = false, error = message) } },
+        ) {
             local.update { it.copy(isSearching = true) }
-            runCatching { placeSearchRepository.search(query.trim()) }
-                .onSuccess { results ->
-                    local.update { it.copy(searchResults = results, isSearching = false) }
-                }
-                .onFailure { error ->
-                    Log.w(TAG) { "Place search failed: ${error.message}" }
-                    local.update {
-                        it.copy(isSearching = false, error = Res.string.error_search_failed.asValue())
-                    }
-                }
+            val results = placeSearchRepository.search(query.trim())
+            local.update { it.copy(searchResults = results, isSearching = false) }
         }
     }
 
     private fun addPlace(placeId: Long) {
         val place = local.value.searchResults.firstOrNull { it.id == placeId } ?: return
-        fire {
+        fire(onError = ::reportError) {
             locationRepository.save(place)
             local.update { it.copy(query = "", searchResults = emptyList()) }
             refresh(place)
         }
     }
 
-    private fun refreshAll() = fire {
+    private fun refreshAll() = fire(
+        onError = { message -> local.update { it.copy(isRefreshing = false, error = message) } },
+    ) {
         local.update { it.copy(isRefreshing = true) }
-        runCatching { forecastRepository.refreshAll(locationRepository.getSaved()) }
-            .onFailure { error ->
-                Log.w(TAG) { "Refresh failed: ${error.message}" }
-                local.update { it.copy(error = Res.string.error_refresh_failed.asValue()) }
-            }
+        forecastRepository.refreshAll(locationRepository.getSaved())
         local.update { it.copy(isRefreshing = false) }
     }
 
-    private fun refresh(location: GeoLocation) = fire {
-        runCatching { forecastRepository.refresh(location) }
-            .onFailure { local.update { state -> state.copy(error = Res.string.error_refresh_failed.asValue()) } }
+    private fun refresh(location: GeoLocation) = fire(onError = ::reportError) {
+        forecastRepository.refresh(location)
     }
+
+    private fun reportError(message: StringValue) = local.update { it.copy(error = message) }
 
     private fun GeoLocation.toPlaceItem() = PlaceItem(
         id = id,
@@ -159,6 +149,5 @@ class LocationsViewModel(
 
     private companion object {
         const val SEARCH_DEBOUNCE_MS = 300L
-        const val TAG = "LocationsViewModel"
     }
 }

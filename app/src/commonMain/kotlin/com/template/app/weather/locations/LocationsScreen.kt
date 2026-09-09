@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ import com.template.app.weather.locations.LocationsModels.State
 import com.template.core.ui.resource.StringValue
 import com.template.core.ui.resource.asValue
 import com.template.design.component.AppCard
+import com.template.design.component.AppIcon
 import com.template.design.component.AppText
 import com.template.design.component.AppTextField
 import com.template.design.component.AppTopBar
@@ -40,6 +40,9 @@ import com.template.app.resources.action_dismiss
 import com.template.app.resources.locations_empty_body
 import com.template.app.resources.locations_empty_title
 import com.template.app.resources.locations_search_placeholder
+import com.template.app.resources.action_add_place
+import com.template.app.resources.action_refresh
+import com.template.app.resources.action_remove_place
 import com.template.app.resources.locations_title
 
 @Composable
@@ -50,7 +53,7 @@ fun LocationsScreen(
     topBar = {
         AppTopBar(title = Res.string.locations_title.asValue()) {
             IconButton(onClick = { onAction(Action.OnRefresh) }) {
-                Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                AppIcon(Icons.Default.Refresh, description = Res.string.action_refresh.asValue())
             }
         }
     },
@@ -133,7 +136,11 @@ private fun PlaceRow(place: PlaceItem, onAdd: () -> Unit) = AppCard(
                 color = AppTheme.colors.textSecondary,
             )
         }
-        Icon(Icons.Default.Add, contentDescription = "Add", tint = AppTheme.colors.primary)
+        AppIcon(
+            Icons.Default.Add,
+            description = Res.string.action_add_place.asValue(),
+            tint = AppTheme.colors.primary,
+        )
     }
 }
 
@@ -147,11 +154,12 @@ private fun SavedRow(item: SavedItem, onOpen: () -> Unit, onRemove: () -> Unit) 
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Icon(
-            imageVector = item.condition.icon(),
-            contentDescription = null,
+        // Decorative: `conditionLabel` says the same thing in words, two columns over.
+        AppIcon(
+            icon = item.condition.icon(),
+            description = null,
             tint = AppTheme.colors.accent,
-            modifier = Modifier.size(AppTheme.sizing.iconLarge),
+            size = AppTheme.sizing.iconLarge,
         )
         Column(Modifier.weight(1f)) {
             AppText(item.name, style = AppTheme.typography.subtitle)
@@ -170,9 +178,9 @@ private fun SavedRow(item: SavedItem, onOpen: () -> Unit, onRemove: () -> Unit) 
             )
         }
         IconButton(onClick = onRemove) {
-            Icon(
+            AppIcon(
                 Icons.Default.Delete,
-                contentDescription = "Remove",
+                description = Res.string.action_remove_place.asValue(),
                 tint = AppTheme.colors.textDisabled,
             )
         }

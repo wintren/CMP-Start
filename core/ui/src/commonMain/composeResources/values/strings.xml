@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_offline">No connection. Check your network and try again.</string>
+    <string name="error_timeout">That took too long. Try again.</string>
+    <string name="error_server">Something went wrong at our end. Try again shortly.</string>
+    <string name="error_unexpected">Something went wrong.</string>
+</resources>

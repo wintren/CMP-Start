@@ -36,7 +36,13 @@ jobs:
         run: ./gradlew :archtest:test
 
       - name: Unit tests
-        run: ./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest
+        run: ./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest :design:desktopTest
+
+      # The same commonTest sources on the other compiler backend. Kotlin/wasm disagrees with the
+      # JVM about enough — number formatting, date parsing, reflection — that compiling for it is
+      # not the same as running on it. Needs a Chrome on the runner, which ubuntu-latest has.
+      - name: Web tests
+        run: ./gradlew :domain:wasmJsBrowserTest :data:wasmJsBrowserTest :app:wasmJsBrowserTest :core:common:wasmJsBrowserTest :design:wasmJsBrowserTest
 
       - name: Android
         run: ./gradlew :launch:android:assembleDebug
@@ -55,8 +61,8 @@ jobs:
           path: '**/build/test-results/**/*.xml'
           if-no-files-found: ignore
 
-  # Linking the iOS framework is the only thing here that needs macOS, and macOS minutes are
-  # billed at ten times the Linux rate. Keep it to exactly that.
+  # Kotlin/Native is the only thing here that needs macOS, and macOS minutes are billed at ten
+  # times the Linux rate. Keep it to exactly that: the framework link and the native tests.
   ios:
     runs-on: macos-latest
     timeout-minutes: 45
@@ -74,3 +80,17 @@ jobs:
 
       - name: iOS framework
         run: ./gradlew :launch:ios:linkDebugFrameworkIosSimulatorArm64
+
+      # Kotlin/Native is the backend most likely to disagree with the JVM, and the one whose
+      # failures are hardest to debug in the field: this is where `NSLog("%@", …)` segfaulting was
+      # caught. Test names may not contain a comma here — the compiler rejects them.
+      - name: iOS tests
+        run: ./gradlew :domain:iosSimulatorArm64Test :data:iosSimulatorArm64Test :app:iosSimulatorArm64Test :core:common:iosSimulatorArm64Test :design:iosSimulatorArm64Test
+
+      - name: Test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-ios
+          path: '**/build/test-results/**/*.xml'
+          if-no-files-found: ignore

@@ -5,13 +5,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.template.core.ui.resource.StringValue
+import com.template.core.ui.resource.asValue
 import com.template.design.resources.Res
 import com.template.design.resources.action_back
 import com.template.design.preview.AppPreview
@@ -29,7 +29,10 @@ fun AppTopBar(
     navigationIcon = {
         onBack?.let {
             IconButton(onClick = it) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.action_back))
+                AppIcon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    description = Res.string.action_back.asValue(),
+                )
             }
         }
     },
@@ -50,7 +53,7 @@ fun AppTopBarShowcase() {
         title = StringValue.Raw("Best day"),
         onBack = {},
         actions = {
-            IconButton(onClick = {}) { Icon(Icons.Default.Settings, contentDescription = null) }
+            IconButton(onClick = {}) { AppIcon(Icons.Default.Settings, description = null) }
         },
     )
 }

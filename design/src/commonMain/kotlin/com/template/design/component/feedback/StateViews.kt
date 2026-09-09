@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +23,7 @@ import com.template.core.ui.resource.asValue
 import com.template.design.resources.Res
 import com.template.design.resources.action_retry
 import com.template.design.component.AppButton
+import com.template.design.component.AppIcon
 import com.template.design.component.AppButtonVariant
 import com.template.design.component.AppText
 import com.template.design.preview.AppPreview
@@ -51,10 +51,10 @@ fun EmptyView(
         modifier = Modifier.padding(AppTheme.spacing.xl),
     ) {
         icon?.let {
-            Icon(
-                imageVector = it,
-                contentDescription = null,
-                modifier = Modifier.size(AppTheme.sizing.iconDisplay),
+            AppIcon(
+                icon = it,
+                description = null,
+                size = AppTheme.sizing.iconDisplay,
                 tint = AppTheme.colors.textDisabled,
             )
         }

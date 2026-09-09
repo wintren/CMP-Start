@@ -55,9 +55,11 @@ constraint below is dormant; if you never bring it back, `compose-material3` can
 carries a constraint that drags material3 up with it, and a material3 built against foundation 1.11
 throws `AbstractMethodError` on foundation 1.12 the first time an `OutlinedTextField` composes.
 
-**`:app` disables `checkComposeUiTestConfigurationForWasmJs`.** The Compose plugin registers that
-check for any compose + wasmJs module and fails on the missing `binaries.executable()`, even though
-this module deliberately produces no artifact (the executable is `:launch:web`). See CMP-4906.
+**`kmp-compose-module` disables `checkComposeUiTestConfigurationForWasmJs`.** The Compose plugin
+registers that check for any compose + wasmJs module with test sources and fails on the missing
+`binaries.executable()`, even though these modules deliberately produce no artifact (the executable
+is `:launch:web`). It lives in the convention plugin because it bites every Compose module the first
+time that module gains a test. See CMP-4906.
 
 **Warnings are errors**, set once in the root `build.gradle.kts` for every subproject. A Kotlin,
 AGP or CMP bump deprecates things in batches, so build with `-PlenientWarnings` while you migrate

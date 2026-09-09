@@ -1,11 +1,11 @@
 package com.template.app
 
-import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.runtime.Composable
 import com.template.app.navigation.NavTab
+import com.template.design.component.AppIcon
 import com.template.design.component.AppText
 import com.template.design.theme.AppTheme
 
@@ -17,7 +17,7 @@ fun AppNavigationRail(active: NavTab, onSelect: (NavTab) -> Unit) {
             NavigationRailItem(
                 selected = tab == active,
                 onClick = { onSelect(tab) },
-                icon = { Icon(tab.icon, contentDescription = null) },
+                icon = { AppIcon(tab.icon, description = null) },
                 label = { AppText(tab.label, style = AppTheme.typography.label) },
                 colors = NavigationRailItemDefaults.colors(
                     selectedIconColor = AppTheme.colors.primary,

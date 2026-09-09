@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,7 +37,7 @@ fun AppButton(
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            icon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(AppTheme.sizing.iconInline)) }
+            icon?.let { AppIcon(it, description = null, size = AppTheme.sizing.iconInline) }
             AppText(label, style = AppTheme.typography.subtitle, color = Color.Unspecified)
         }
     }

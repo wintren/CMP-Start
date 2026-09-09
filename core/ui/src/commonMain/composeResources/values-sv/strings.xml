@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_offline">Ingen anslutning. Kontrollera nätverket och försök igen.</string>
+    <string name="error_timeout">Det tog för lång tid. Försök igen.</string>
+    <string name="error_server">Något gick fel hos oss. Försök igen om en stund.</string>
+    <string name="error_unexpected">Något gick fel.</string>
+</resources>

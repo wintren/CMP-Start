@@ -39,4 +39,16 @@ class Navigator : NavControls {
     }
 
     override fun selectTab(tab: NavTab) = navigateTo(tab.destination, clearBackStack = true)
+
+    /** The host's entry point: a restored stack, or a deep link's [stackFor]. Never a screen's. */
+    fun restore(destinations: List<Destination>) {
+        if (destinations.isEmpty()) return
+        stack.value = destinations
+    }
+
+    /**
+     * True until something has navigated. A link someone opened just now has already moved us, and
+     * must not be overwritten by whatever the last session happened to save.
+     */
+    val isAtStart: Boolean get() = stack.value == Destination.initial
 }

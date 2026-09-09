@@ -45,8 +45,3 @@ compose.resources {
     publicResClass = true
     packageOfResClass = "com.template.app.resources"
 }
-
-// `:app` has Compose UI but no wasm entry point (that lives in `:launch:web`). The Compose plugin
-// registers this check for any compose + wasmJs module and fails on the missing
-// `binaries.executable()`, even with no Compose UI tests here to bundle. See CMP-4906.
-tasks.matching { it.name == "checkComposeUiTestConfigurationForWasmJs" }.configureEach { enabled = false }

@@ -18,6 +18,9 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0.0"
+
+        // Deep links arrive as `<applicationId>://<route>`; see the VIEW filter in the manifest.
+        manifestPlaceholders["appLinkScheme"] = applicationId as String
     }
 
     buildTypes {

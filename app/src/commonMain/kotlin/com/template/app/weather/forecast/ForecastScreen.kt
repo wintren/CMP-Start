@@ -11,21 +11,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.template.app.resources.Res
+import com.template.app.resources.action_refresh
 import com.template.app.resources.forecast_missing
 import com.template.app.weather.forecast.ForecastModels.Action
 import com.template.app.weather.forecast.ForecastModels.CurrentBlock
 import com.template.app.weather.forecast.ForecastModels.DayItem
 import com.template.app.weather.forecast.ForecastModels.State
 import com.template.app.weather.format.icon
+import com.template.app.weather.format.label
 import com.template.core.ui.resource.asValue
 import com.template.design.component.AppCard
+import com.template.design.component.AppIcon
 import com.template.design.component.AppText
 import com.template.design.component.AppTopBar
 import com.template.design.component.feedback.ErrorView
@@ -40,7 +42,7 @@ fun ForecastScreen(
     topBar = {
         AppTopBar(title = state.title, onBack = { onAction(Action.OnBack) }) {
             IconButton(onClick = { onAction(Action.OnRefresh) }) {
-                Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                AppIcon(Icons.Default.Refresh, description = Res.string.action_refresh.asValue())
             }
         }
     },
@@ -78,11 +80,12 @@ private fun CurrentCard(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.lg),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Icon(
-            imageVector = current.condition.icon(),
-            contentDescription = null,
+        // Decorative: `conditionLabel` is directly beside it.
+        AppIcon(
+            icon = current.condition.icon(),
+            description = null,
             tint = AppTheme.colors.accent,
-            modifier = Modifier.size(AppTheme.sizing.iconDisplay),
+            size = AppTheme.sizing.iconDisplay,
         )
         Column(Modifier.weight(1f)) {
             AppText(current.temperature, style = AppTheme.typography.numeric)
@@ -111,11 +114,12 @@ private fun DayRow(day: DayItem) = AppCard(modifier = Modifier.fillMaxWidth()) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         AppText(day.dayLabel, style = AppTheme.typography.subtitle, modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = day.condition.icon(),
-            contentDescription = null,
+        // No condition text in this row, so the icon has to carry it.
+        AppIcon(
+            icon = day.condition.icon(),
+            description = day.condition.label(),
             tint = AppTheme.colors.textSecondary,
-            modifier = Modifier.size(AppTheme.sizing.iconSmall),
+            size = AppTheme.sizing.iconSmall,
         )
         Column(horizontalAlignment = Alignment.End, modifier = Modifier.weight(1f)) {
             AppText(day.precipitationChance, style = AppTheme.typography.label, color = AppTheme.colors.primary)

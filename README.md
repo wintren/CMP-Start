@@ -27,6 +27,8 @@ Delete it and keep the scaffolding.
 | Time | an injected `kotlin.time.Clock` + `core/common/time/` |
 | Adaptive UI | `AppTheme.windowSize` — navigation rail, content max width, a two-pane list-detail |
 | Desktop chrome | app-drawn title bar over macOS full-window content, Dock icon and name |
+| Failures | `AppException` in `:core:common`, retried by Ktor where it helps, worded once in `:core:ui` |
+| Links | one route codec behind the browser URL, Android deep links and the resumed session |
 | Tests | kotlin-test, coroutines-test, Ktor MockEngine |
 
 No mocking library and no test compiler plugins. Both are Kotlin-version-locked and would gate
@@ -43,6 +45,10 @@ every Kotlin upgrade; hand-written fakes (`app/src/commonTest/.../fake/`) and `M
 ```
 
 `-Penv=staging` or `-Penv=prod` on any of these swaps the configuration — see below.
+
+Links work: `localhost:8081/#/forecast/1` on web, and
+`adb shell am start -a android.intent.action.VIEW -d "com.template.app://forecast/1"` on Android.
+Both land on the forecast with its list behind it. The browser's back button and a reload behave.
 
 On macOS the desktop window draws its own title bar under the traffic lights; put a
 `desktop_icon.png` in `launch/desktop/src/desktopMain/resources/` to give it a Dock icon.
@@ -94,7 +100,12 @@ The generator is the second half of `core/common/build.gradle.kts` — about fif
 ```bash
 ./gradlew check          # everything below
 ./gradlew :archtest:test # architecture rules, as tests
-./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest
+./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest :design:desktopTest
+
+# The same commonTest sources on the other two backends. CI runs both; run them before a release
+# and after touching anything in `commonMain` that formats, parses or reflects.
+./gradlew :domain:iosSimulatorArm64Test :core:common:iosSimulatorArm64Test :app:iosSimulatorArm64Test
+./gradlew :domain:wasmJsBrowserTest :core:common:wasmJsBrowserTest :app:wasmJsBrowserTest
 ```
 
 What the tests are there to demonstrate, one each:
@@ -109,6 +120,8 @@ What the tests are there to demonstrate, one each:
 | `data/…/SavedLocationMigrationTest` | a v1 database migrated to v2 with its rows intact |
 | `core/…/LogTest` | a filtered log level never invokes the message lambda |
 | `core/…/TimeTest` | the date helpers, pinned by a `FixedClock` instead of the machine's date |
+| `app/…/RoutesTest` | every destination survives the URL round trip, and a bad link is not a crash |
+| `app/…/BackStackStoreTest` | a session resumes inside the window and starts fresh outside it |
 | `design/…/AppWindowSizeTest` | the breakpoints, including which side of 600 and 840 they fall on |
 | `app/…/ListDetailSceneTest` | when a back stack renders as two panes — the whole adaptive decision |
 | `archtest/…` | the layering, clock, config, window, design-system and string rules, enforced rather than documented |
@@ -127,7 +140,8 @@ Rewrites the base package (`com.template`), the Gradle root project name, the An
    no backend yet.
 3. Replace the palette in `design/…/theme/AppColors.kt` and the type scale in `AppTypography.kt`,
    then check both against `./gradlew :launch:desktop:run -PappCatalog`.
-4. Prune `values*/strings.xml` in `:app` down to what you keep, in all three locales.
+4. Prune `values*/strings.xml` in `:app` down to what you keep, in all three locales. The generic
+   failure strings in `:core:ui` are worth keeping.
 5. Rename the `savedLocation` table in `data/…/sqldelight/` and delete `migrations/1.sqm` — nothing
    is installed yet, so the schema can start at version 1 again.
 6. Keep or delete `:feature:settings` — read the note in `docs/architecture.md` first.
@@ -171,7 +185,7 @@ design/             theme + components, each with a preview and a showcase
 domain/             models, pure logic, repository contracts
 data/               repository impls, sources, mappers, HTTP
 core/common         combines/tuples, logging, time, config, key-value storage
-core/ui             ViewModel base, StringValue
+core/ui             ViewModel base, StringValue, failure strings
 di/                 aggregation only
 archtest/           the architecture rules, as tests
 .github/workflows   check.yml — the command block above, on every push and PR
@@ -194,6 +208,7 @@ Add when you need it, not before:
 | Left out | Add when |
 |---|---|
 | Offline cache | a cold start showing stale data beats showing a spinner |
+| Paging | your first endpoint that returns thousands of rows — the shape it should take is in `docs/architecture.md` |
 | A mocking library | never, if you can help it — every KMP one is a KSP processor and would gate each Kotlin bump. Fakes live in `app/src/commonTest/.../fake/` |
 | ktlint / detekt | same reason — both parse with Kotlin compiler internals. `.editorconfig` plus the IDE covers formatting |
 | Paparazzi / screenshot tests | the design system stabilises and regressions start costing you |

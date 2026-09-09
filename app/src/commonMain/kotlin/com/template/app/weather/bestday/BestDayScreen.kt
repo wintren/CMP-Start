@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import com.template.app.resources.Res
 import com.template.app.resources.best_day_activity
 import com.template.app.resources.best_day_empty_body
 import com.template.app.resources.best_day_empty_title
+import com.template.app.resources.action_refresh
 import com.template.app.resources.best_day_title
 import com.template.app.weather.bestday.BestDayModels.Action
 import com.template.app.weather.bestday.BestDayModels.RankedItem
@@ -36,6 +36,7 @@ import com.template.app.weather.format.label
 import com.template.core.ui.resource.StringValue
 import com.template.core.ui.resource.asValue
 import com.template.design.component.AppCard
+import com.template.design.component.AppIcon
 import com.template.design.component.AppText
 import com.template.design.component.AppTopBar
 import com.template.design.component.feedback.EmptyView
@@ -51,7 +52,7 @@ fun BestDayScreen(
     topBar = {
         AppTopBar(title = Res.string.best_day_title.asValue()) {
             IconButton(onClick = { onAction(Action.OnRefresh) }) {
-                Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                AppIcon(Icons.Default.Refresh, description = Res.string.action_refresh.asValue())
             }
         }
     },
@@ -128,11 +129,12 @@ private fun RankedRow(item: RankedItem, onOpen: (Long) -> Unit) = AppCard(
                 color = AppTheme.colors.textSecondary,
             )
         }
-        Icon(
-            imageVector = item.condition.icon(),
-            contentDescription = null,
+        // The only place this row names the weather, so it is not decorative.
+        AppIcon(
+            icon = item.condition.icon(),
+            description = item.condition.label(),
             tint = AppTheme.colors.textSecondary,
-            modifier = Modifier.size(AppTheme.sizing.iconSmall),
+            size = AppTheme.sizing.iconSmall,
         )
         AppText(item.temperature, style = AppTheme.typography.heading)
     }

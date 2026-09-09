@@ -1,8 +1,6 @@
 package com.template.app.weather.forecast
 
 import com.template.app.navigation.NavControls
-import com.template.app.resources.Res
-import com.template.app.resources.error_forecast_refresh_failed
 import com.template.app.weather.forecast.ForecastModels.Action
 import com.template.app.weather.forecast.ForecastModels.CurrentBlock
 import com.template.app.weather.forecast.ForecastModels.DayItem
@@ -17,7 +15,6 @@ import com.template.core.common.flow.combines
 import com.template.core.common.logging.Log
 import com.template.core.common.time.today
 import com.template.core.ui.resource.StringValue
-import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
 import com.template.core.ui.viewmodel.WithActions
 import com.template.core.ui.viewmodel.fire
@@ -80,17 +77,15 @@ class ForecastViewModel(
         }
     }
 
-    private fun refresh() = fire {
+    private fun refresh() = fire(
+        onError = { message -> local.update { it.copy(error = message) } },
+    ) {
         val location = locationRepository.getSaved().firstOrNull { it.id == locationId }
         if (location == null) {
             Log.w(TAG) { "Forecast opened for unsaved location $locationId" }
             return@fire
         }
-        runCatching { forecastRepository.refresh(location) }
-            .onFailure { error ->
-                Log.w(TAG) { "Refresh failed: ${error.message}" }
-                local.update { it.copy(error = Res.string.error_forecast_refresh_failed.asValue()) }
-            }
+        forecastRepository.refresh(location)
     }
 
     private fun GeoLocation?.regionLabel(): StringValue = when (this) {

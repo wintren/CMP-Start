@@ -1,6 +1,7 @@
 package com.template.app.di
 
 import com.template.app.AppViewModel
+import com.template.app.navigation.BackStackStore
 import com.template.app.navigation.NavControls
 import com.template.app.navigation.Navigator
 import com.template.app.weather.bestday.BestDayViewModel
@@ -15,6 +16,8 @@ import org.koin.dsl.module
 
 private val uiModule = module {
     single { Navigator() }
+    // Not `new(::…)`: that would demand a `Duration` from the graph rather than take the default.
+    single { BackStackStore(store = get(), clock = get()) }
     // The same instance, seen as the narrow interface. Not a second Navigator.
     single<NavControls> { get<Navigator>() }
 
