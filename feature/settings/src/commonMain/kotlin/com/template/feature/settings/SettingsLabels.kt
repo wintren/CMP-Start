@@ -11,10 +11,7 @@ import com.template.feature.settings.resources.settings_theme_system
 import com.template.feature.settings.resources.settings_units_imperial
 import com.template.feature.settings.resources.settings_units_metric
 
-/**
- * An enum name is an identifier. These map each one to a word a translator can change, so neither
- * the enum nor the composable holds English.
- */
+/** An enum name is an identifier; these map each to a word a translator can change. */
 internal fun UnitSystem.label(): StringValue = when (this) {
     UnitSystem.Metric -> Res.string.settings_units_metric
     UnitSystem.Imperial -> Res.string.settings_units_imperial

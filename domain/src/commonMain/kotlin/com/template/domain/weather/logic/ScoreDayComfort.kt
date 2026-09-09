@@ -9,14 +9,8 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * Pure: scores one day against one activity profile.
- *
- * "Pure" is the whole point of the `logic` tier — same inputs, same answer, no clock, no I/O, no
- * randomness. That is what makes the rule testable without a single fake, and what lets you argue
- * about the numbers without booting the app.
- *
- * Deductions are capped per factor so no single bad number can zero out an otherwise fine day,
- * and each deduction that actually bites records why.
+ * Deductions are capped per factor, so no single bad number can zero out an otherwise fine
+ * day, and each one records a [ComfortPenalty] so the UI can say why.
  */
 class ScoreDayComfort {
 

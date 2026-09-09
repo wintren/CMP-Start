@@ -3,10 +3,6 @@ package com.template.archtest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-/**
- * The design system is only "the only design system" if nothing routes around it. These are the
- * three ways it gets routed around, plus the rule that keeps a component visible.
- */
 class DesignSystemTest {
 
     private val paletteDirectory = "design/src/commonMain/kotlin/com/template/design/theme/"
@@ -19,10 +15,7 @@ class DesignSystemTest {
         assertTrue(designComponents.isNotEmpty(), "Found no design components — has the layout changed?")
     }
 
-    /**
-     * A hex literal outside the palette is a colour that survives a re-theme, which is exactly the
-     * bug `AppColors` exists to make impossible.
-     */
+    /** A hex literal outside the palette is a colour that survives a re-theme. */
     @Test
     fun `colours come from the palette, not from hex literals`() {
         val violations = SourceTree.all
@@ -36,10 +29,7 @@ class DesignSystemTest {
         )
     }
 
-    /**
-     * `AppText` takes a `StringValue`, so a bare `Text` is also a `String` in state — the thing
-     * that makes a screen untranslatable and a state assertion compare English.
-     */
+    /** A bare `Text` means a `String` in state, which is a screen that cannot be translated. */
     @Test
     fun `only the design system calls Text directly`() {
         val violations = SourceTree.all
@@ -49,11 +39,7 @@ class DesignSystemTest {
         assertTrue(violations.isEmpty(), "Use `AppText`:\n${violations.pretty()}")
     }
 
-    /**
-     * Screens only. A component may hold a literal `dp` — a chip's 2dp inset is genuinely local to
-     * it and a token for it would be noise. A screen laying out its own icon sizes is how two
-     * lists end up a hair apart, so screens take every measurement from `AppTheme`.
-     */
+    /** Screens only. A component may hold a literal `dp` — a chip's 2dp inset is local to it. */
     @Test
     fun `screens take their measurements from the theme`() {
         val violations = SourceTree.all
@@ -68,10 +54,7 @@ class DesignSystemTest {
         )
     }
 
-    /**
-     * A component nobody can see is a component nobody maintains. The preview is also the cheapest
-     * proof it renders outside the one screen it was written for.
-     */
+    /** A component nobody can see is a component nobody maintains. */
     @Test
     fun `every design component carries a preview`() {
         val violations = designComponents

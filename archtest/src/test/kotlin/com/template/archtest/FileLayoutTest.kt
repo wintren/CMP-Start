@@ -6,11 +6,8 @@ import kotlin.test.assertTrue
 class FileLayoutTest {
 
     /**
-     * One coding unit per file, named after it — because git tracks files. Splitting a two-type
-     * file later creates a *new* file and loses the moved type's history.
-     *
-     * Exempt: Compose and screen-model files, where several composables or a State/Action pair in
-     * one file is the convention.
+     * Git tracks files: splitting a two-type file later creates a *new* file and loses the moved
+     * type's history.
      */
     @Test
     fun `a file declaring several top-level types is named after one of them`() {

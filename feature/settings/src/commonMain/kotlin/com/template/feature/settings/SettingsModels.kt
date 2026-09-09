@@ -8,16 +8,7 @@ private fun UnitSystem.asOption() = SettingsModels.Option(this, label())
 
 private fun ThemeMode.asOption() = SettingsModels.Option(this, label())
 
-/**
- * The screen's whole contract, in one file: what it shows and what the user can do.
- *
- * One `State` and one sealed `Action` is the entire interface between ViewModel and Composable.
- * The screen receives `state` and `onAction` and nothing else — no ViewModel reference, no
- * callbacks-per-button — which is what makes it previewable and the ViewModel testable.
- *
- * Grouping `State`/`Action`/`Event` in one `object` is the deliberate exception to
- * one-type-per-file: they change together, always.
- */
+/** `State` and `Action` share a file: they change together, always. */
 object SettingsModels {
 
     data class State(
@@ -28,10 +19,7 @@ object SettingsModels {
         val temperatureExample: StringValue = StringValue.Empty,
     )
 
-    /**
-     * A choice with its word already chosen. The screen renders `label` and hands `value` back —
-     * it never decides how a `UnitSystem` is spelled, which is what keeps it translatable.
-     */
+    /** A choice with its word already chosen. The screen renders `label` and hands `value` back. */
     data class Option<T>(val value: T, val label: StringValue)
 
     sealed interface Action {

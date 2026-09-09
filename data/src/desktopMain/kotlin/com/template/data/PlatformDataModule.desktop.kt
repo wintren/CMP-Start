@@ -18,9 +18,8 @@ actual val platformDataModule: Module = module {
 }
 
 /**
- * The JDBC driver is the one that knows nothing about schema versions — it will happily open a v1
- * file against v2 code and fail on the first query. So creating and migrating is done here, off
- * `PRAGMA user_version`, which is also where the driver would have stored it.
+ * The JDBC driver tracks no schema version — it opens a v1 file against v2 code and fails on
+ * the first query. So create and migrate here, off `PRAGMA user_version`.
  */
 private fun desktopDriver(): SqlDriver {
     val file = File(System.getProperty("user.home"), ".CMP_Start/$DATABASE_NAME")

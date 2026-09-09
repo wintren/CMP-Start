@@ -6,11 +6,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
-/**
- * A Source: the boundary class the repository talks to. Dumb on purpose — it builds one request and
- * hands back the wire type. It earns its existence by owning the query parameters (including the
- * unit choices the domain depends on); it makes no decisions.
- */
 internal class OpenMeteoForecastSource(private val client: HttpClient) {
 
     suspend fun fetch(latitude: Double, longitude: Double): ForecastResponse =

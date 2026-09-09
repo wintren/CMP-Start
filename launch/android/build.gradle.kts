@@ -41,6 +41,9 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     implementation(projects.app)
     implementation(projects.di)
+    // For the startup log level. `:app` depends on `:core:common` with `implementation`, so it is
+    // not on this module's compile classpath transitively.
+    implementation(projects.core.common)
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
     implementation(libs.koin.core)

@@ -6,15 +6,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 /**
- * The back stack, as state the UI observes.
- *
- * A single stack, and [selectTab] resets it to that tab's root: switching tabs discards where you
- * were inside the previous one. Correct for three shallow tabs, wrong the moment a tab has depth
- * worth preserving — at that point give each tab its own stack (a `Stack<T>` per tab, switched by
- * the active tab) rather than trying to make one stack remember several histories.
- *
- * The stack is never empty; [pop] refuses to remove the root so there is no state where nothing
- * renders.
+ * One stack, and [selectTab] resets it to that tab's root — switching tabs discards where you
+ * were. Correct for three shallow tabs; give each tab its own stack once one has depth.
  */
 class Navigator : NavControls {
 

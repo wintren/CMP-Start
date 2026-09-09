@@ -25,16 +25,9 @@ import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 /**
- * Builds the real graph and constructs everything in it.
- *
- * Koin resolves at runtime, so a missing binding is otherwise a crash on whichever screen needed it
- * — found by whoever opens that screen next, which on iOS or wasm can be much later. This test is
- * why the app cannot ship with a hole in its graph.
- *
- * It constructs rather than reflects, so it also runs each ViewModel's `init` and its
- * `viewModelState` builder — a `stateIn` that throws on construction fails here too.
- *
- * JVM-only, which is fine: the graph is declared in common code.
+ * Koin resolves at runtime, so a missing binding is otherwise a crash on whichever screen
+ * needed it — on iOS or wasm, much later. Constructs rather than reflects, so each
+ * ViewModel's `init` and `viewModelState` run too.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppModulesTest {

@@ -11,24 +11,20 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
- * The one place an [HttpClient] is built.
- *
- * No engine is named: each target's build file puts exactly one engine on its classpath (OkHttp,
- * Darwin, CIO, JS) and Ktor resolves it. That is why this file needs no `expect`/`actual`.
+ * No engine is named: each target's build file puts exactly one on its classpath and Ktor
+ * resolves it, which is why this needs no `expect`/`actual`.
  */
 object HttpClientFactory {
 
-    fun create(logRequests: Boolean = false): HttpClient = HttpClient {
+    /**
+     * @param logRequests logs every URL and header. Defaults to [Log.isDebug]; `commonMain` has
+     * no build-config flag to read, and `true` here would ship the request log.
+     */
+    fun create(json: Json, logRequests: Boolean = Log.isDebug): HttpClient = HttpClient {
         expectSuccess = true
 
         install(ContentNegotiation) {
-            json(
-                Json {
-                    // The wire adds fields without warning; a new one must not break parsing.
-                    ignoreUnknownKeys = true
-                    explicitNulls = false
-                }
-            )
+            json(json)
         }
 
         install(HttpTimeout) {
@@ -40,12 +36,13 @@ object HttpClientFactory {
             install(Logging) {
                 level = LogLevel.INFO
                 logger = object : Logger {
-                    override fun log(message: String) = Log.d("Http") { message }
+                    override fun log(message: String) = Log.d(TAG) { message }
                 }
             }
         }
     }
 
+    private const val TAG = "Http"
     private const val REQUEST_TIMEOUT_MS = 20_000L
     private const val CONNECT_TIMEOUT_MS = 10_000L
 }

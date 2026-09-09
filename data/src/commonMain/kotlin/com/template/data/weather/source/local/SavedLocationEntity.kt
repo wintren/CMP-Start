@@ -2,7 +2,7 @@ package com.template.data.weather.source.local
 
 import kotlinx.serialization.Serializable
 
-/** What the local store persists. Its own type, so a schema change is not a domain change. */
+/** Its own type, so a schema change is not a domain change. */
 @Serializable
 internal data class SavedLocationEntity(
     val id: Long,

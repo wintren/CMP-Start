@@ -13,12 +13,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 /**
- * In-memory cache in front of the network. `refresh` writes into it and **throws on failure**:
- * `:data` never decides what an error means, and swallowing one here would leave the screen showing
- * stale data with no way to know.
- *
- * The cache is not persisted, so a cold start shows a spinner rather than yesterday's forecast —
- * the right trade for weather. Persist it (another Source, same repository) if you need offline.
+ * The cache is not persisted, so a cold start shows a spinner rather than yesterday's
+ * forecast. Persist it behind another Source if you need offline.
  */
 internal class ForecastRepositoryImpl(
     private val forecastSource: OpenMeteoForecastSource,

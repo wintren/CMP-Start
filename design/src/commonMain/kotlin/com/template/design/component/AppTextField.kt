@@ -59,7 +59,6 @@ fun AppTextField(
     ),
 )
 
-/** Empty (placeholder showing) and typed-in (clear button showing) are the two states. */
 @Composable
 fun AppTextFieldShowcase() {
     var empty by remember { mutableStateOf("") }

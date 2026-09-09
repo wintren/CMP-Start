@@ -9,17 +9,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 
-/**
- * The only two ways a screen touches its ViewModel:
- *
- * ```
- * val state by viewModel.collectState()
- * MyScreen(state = state, onAction = viewModel::onAction)
- * viewModel.collectEvents { event -> ... }
- * ```
- *
- * Both are lifecycle-aware, so a backgrounded screen stops recomposing and stops consuming events.
- */
+/** Both are lifecycle-aware: a backgrounded screen stops recomposing and consuming events. */
 @Composable
 fun <S> WithState<S>.collectState(): State<S> = stateFlow.collectAsStateWithLifecycle()
 

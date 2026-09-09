@@ -1,10 +1,6 @@
 package com.template.domain.weather.model
 
-/**
- * The activities the app can rank days for. Deliberately a domain enum rather than a UI list:
- * the numbers are a business rule, and a screen that invented its own would silently disagree
- * with the ranking.
- */
+/** A domain enum, not a UI list: the numbers are a business rule. */
 enum class ActivityProfile(val comfort: ComfortProfile) {
     Running(
         ComfortProfile(

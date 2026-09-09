@@ -95,10 +95,7 @@ fun ErrorView(
     }
 }
 
-/**
- * All three at a fixed height: each one defaults to `fillMaxSize`, which in a preview would let
- * the first fill the frame and hide the other two.
- */
+/** Fixed height: each defaults to `fillMaxSize`, which would let the first hide the others. */
 @Composable
 fun StateViewsShowcase() {
     val box = Modifier.fillMaxWidth().height(STATE_VIEW_HEIGHT)

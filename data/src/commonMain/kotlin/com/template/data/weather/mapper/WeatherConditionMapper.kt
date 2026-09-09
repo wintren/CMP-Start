@@ -3,8 +3,8 @@ package com.template.data.weather.mapper
 import com.template.domain.weather.model.WeatherCondition
 
 /**
- * WMO 4677 codes, as Open-Meteo reports them, collapsed into the conditions the app distinguishes.
- * The full table lives at https://open-meteo.com/en/docs — the grouping below is ours.
+ * WMO 4677 codes collapsed into the conditions this app distinguishes. Full table at
+ * https://open-meteo.com/en/docs — the grouping is ours.
  */
 internal fun Int?.toWeatherCondition(): WeatherCondition = when (this) {
     null -> WeatherCondition.Unknown

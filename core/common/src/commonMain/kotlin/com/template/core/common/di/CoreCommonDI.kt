@@ -8,6 +8,5 @@ import org.koin.dsl.module
 
 val coreCommonModule = module {
     single { platformSettings() }
-    // `new(::Impl)` registers only the interface — the impl stays unresolvable in the graph.
     single<KeyValueStore> { new(::SettingsKeyValueStore) }
 }

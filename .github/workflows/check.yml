@@ -36,7 +36,7 @@ jobs:
         run: ./gradlew :archtest:test
 
       - name: Unit tests
-        run: ./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest
+        run: ./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest
 
       - name: Android
         run: ./gradlew :launch:android:assembleDebug

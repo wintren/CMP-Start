@@ -32,7 +32,6 @@ fun AppCard(
     content = content,
 )
 
-/** The three ways a card is configured: plain, tappable, and outlined. */
 @Composable
 fun AppCardShowcase() {
     AppCard(modifier = Modifier.fillMaxWidth()) {

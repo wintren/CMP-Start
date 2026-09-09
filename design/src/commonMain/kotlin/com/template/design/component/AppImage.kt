@@ -18,10 +18,8 @@ import com.template.design.preview.AppPreview
 import com.template.design.theme.AppTheme
 
 /**
- * Remote images, with the loading and failure states already decided so a screen never has to.
- *
- * Needs the singleton loader that `installAppImageLoader()` in `:app` sets up — Coil ships no
- * network fetcher on iOS or wasmJs, so without it every load fails silently.
+ * Needs the singleton loader `installAppImageLoader()` sets up — Coil ships no network
+ * fetcher on iOS or wasmJs, so without it every load fails silently.
  */
 @Composable
 fun AppImage(
@@ -44,10 +42,7 @@ private fun ImagePlaceholder() = Box(
     modifier = Modifier.fillMaxSize().background(AppTheme.colors.surfaceRaised),
 )
 
-/**
- * A reachable URL and a broken one, so the placeholder is visible either way. Previews have no
- * network, so both render as the placeholder — the catalog on desktop is where this actually loads.
- */
+/** Previews have no network, so both render as the placeholder; the desktop catalog loads. */
 @Composable
 fun AppImageShowcase() {
     AppImage(

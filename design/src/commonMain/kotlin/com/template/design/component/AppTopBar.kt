@@ -42,7 +42,6 @@ fun AppTopBar(
     ),
 )
 
-/** Title only, with a back arrow, and with a trailing action. */
 @Composable
 fun AppTopBarShowcase() {
     AppTopBar(title = StringValue.Raw("Places"))

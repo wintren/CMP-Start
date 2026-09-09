@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
-/** Resolves a [StringValue] for display. Compose Resources handles every target. */
 @Composable
 fun StringValue.resolve(): String = when (this) {
     StringValue.Empty -> ""
@@ -16,7 +15,6 @@ fun StringValue.resolve(): String = when (this) {
     is StringValue.Transformed -> transform(input.resolve())
 }
 
-/** Non-composable resolution, for tests and for anything outside composition. */
 suspend fun StringValue.resolveAsString(): String = when (this) {
     StringValue.Empty -> ""
     is StringValue.Raw -> value

@@ -3,11 +3,8 @@ package com.template.archtest
 import java.io.File
 
 /**
- * Reads the repo's Kotlin sources as text.
- *
- * Deliberately not Konsist or any other rule framework: this must keep working across Kotlin, AGP
- * and KMP upgrades, and it has to see `commonMain` of modules this one must not depend on. Text is
- * a coarse tool, but a rule you can read in ten lines is a rule people keep.
+ * Deliberately not Konsist or any rule framework: this must survive every Kotlin, AGP and KMP
+ * upgrade, and it has to read `commonMain` of modules it must not depend on.
  */
 data class KotlinSource(
     val module: String,

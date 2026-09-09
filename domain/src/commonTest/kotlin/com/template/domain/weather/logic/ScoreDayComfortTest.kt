@@ -10,10 +10,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-/**
- * Pure logic needs no fakes, no dispatcher and no test rule — which is the argument for keeping
- * decisions in the `logic` tier. Note that this file names no HTTP, no storage and no Compose.
- */
 class ScoreDayComfortTest {
 
     private val scoreDayComfort = ScoreDayComfort()

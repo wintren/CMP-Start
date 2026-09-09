@@ -42,19 +42,38 @@ part of the job.
     demo is written once. `:archtest` fails a component that has neither.
 11. **No user-visible `String` in code.** Screens and ViewModels carry `StringValue`; the words
     live in `composeResources/values*/strings.xml`. `StringValue.Raw` is for text that is already
-    final — a place name, a formatted number — never for a sentence.
-12. **No KDoc that restates the signature.** A comment earns its line by explaining *why*, naming a
-    constraint the type cannot express, or recording a decision a reader would otherwise undo.
+    final — a place name, a formatted number, a `—` placeholder. `:archtest` fails a key that
+    is missing from any locale.
+12. **Comments are noise until proven otherwise.** Default to none. Run all four tests before
+    writing one, and on every comment in a file you touch — deleting a failing comment is not a
+    drive-by refactor:
+    - **Restatement.** Every fact already in the name, signature, type or surrounding context →
+      delete. `minimumLevel` inside a level filter needs nothing.
+    - **Altitude.** Teaching a concept — KMP, Compose, coroutines, this architecture → delete. That
+      belongs in `docs/`, written once.
+    - **Scope.** A fact about a caller, a call site, or a collaborator's internals → delete. A
+      function knows what it does, not who uses it, and not how the repository it calls stores
+      anything.
+    - **Undo.** Would a senior developer, reading only the code, change it for the worse? That is
+      the only thing that earns a comment: an ordering constraint, a non-obvious side effect, a
+      workaround, a decision that looks wrong until you know what broke.
+    One line. Two if it earns it. Longer *only* for a decision a reader would otherwise undo, and
+    then state what breaks and the issue reference — not the reasoning. Type-level KDoc only when
+    the type is genuinely complex or overloaded. No usage examples in code, and no `@param`/
+    `@return` that repeats the signature.
 13. **Use `combines()`, never `combine()`.** The array overload erases every type past the first.
 14. **No new dependency** without saying what it replaces. Especially no mocking library and no
     compiler plugins — they gate Kotlin upgrades.
-15. **Fix what you touch.** No drive-by refactors.
+15. **`Log`, never `println`.** `Log.d { "…" }` — the message is a lambda so nothing is built
+    when the level is filtered. Pass a `tag` in anything you will debug on iOS or wasm; those
+    targets have no call site, because taking one there is expensive. See `docs/architecture.md`.
+16. **Fix what you touch.** No drive-by refactors.
 
 ## Verify before you claim done
 
 ```bash
 ./gradlew :archtest:test                                   # the rules
-./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest
+./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest
 ./gradlew :launch:desktop:compileKotlinDesktop :launch:android:assembleDebug
 ```
 

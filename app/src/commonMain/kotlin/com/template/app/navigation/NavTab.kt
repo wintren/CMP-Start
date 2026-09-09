@@ -12,7 +12,6 @@ import com.template.app.resources.tab_settings
 import com.template.core.ui.resource.StringValue
 import com.template.core.ui.resource.asValue
 
-/** The top-level destinations reachable from the bottom bar. */
 enum class NavTab(
     val destination: Destination,
     val icon: ImageVector,

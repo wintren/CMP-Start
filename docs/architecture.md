@@ -87,8 +87,11 @@ The binding is `platformDataModule`, an `expect val Module` with one `actual` pe
 the pattern to copy when something is per-platform but not a one-line `expect fun`: the drivers
 share no constructor, so a Koin module is the narrowest thing that can differ.
 
-Preferences stay on `KeyValueStore` (multiplatform-settings). A handful of scalars is not a
-database, and the settings feature owning its own storage is what keeps it liftable.
+Preferences stay on `KeyValueStore` (multiplatform-settings): `observe`/`get`/`put` for
+`String`, `Int` and `Boolean`. A handful of scalars is not a database, and the settings feature
+owning its own storage is what keeps it liftable. Add a type to the interface and to
+`SettingsKeyValueStore` together — every write has to go through the same revision counter, or
+the observers miss it.
 
 **Schema changes.** `SavedLocation.sq` holds the current schema and the queries;
 `migrations/<version>.sqm` holds the route an older database takes to reach it. Bump `version` in
@@ -246,6 +249,20 @@ components, and it is never a nav destination, so R8 drops it from a release bui
 `:archtest` fails a component with no preview and no showcase, a hex literal outside
 `design/theme/`, a bare `Text` outside `:design`, and a literal `dp` in a `…Screen.kt`.
 
+## Logging
+
+`Log` in `:core:common`, never `println`. The message is a lambda, so nothing inside it runs when
+the level is filtered — including the stack walk that finds the call site.
+
+`callSite()` is `expect`/`actual` because its cost is. The JVM walks `Throwable().stackTrace` and
+returns `(BestDayViewModel.kt:88)`, which IntelliJ and most terminals turn into a link. iOS and wasm
+return `null` — symbolicating is expensive on Native, and wasm frames name compiled output — so
+**pass an explicit tag, `Log.w(TAG) { … }`, in anything you expect to debug on those targets.**
+
+`Log.minimumLevel` is the one filter, set at startup; `:launch:android` reads it off the manifest's
+debuggable flag, and `HttpClientFactory` defaults its request logging to `Log.isDebug`. `Log.onLog`
+is the hook for a second destination — crash-reporter breadcrumbs, an in-app viewer, a recorder.
+
 ## Errors
 
 **Throw** from `:domain` and `:data`. **Catch in the ViewModel** and map to state. No `Result` or
@@ -308,9 +325,15 @@ the cost: it cannot know the app's navigator, so the host passes `onBack` in
 - a central `di/` package in `:domain` or `:data`
 - a hex colour outside `design/theme/`, a bare `Text` outside `:design`, a literal `dp` in a screen
 - a design component with no `@Preview` or no `…Showcase()`
+- a string key present in `values/` but missing from `values-sv/` or `values-es/`, or vice versa
 
 Text is a coarse tool. It is also a rule you can read in ten lines, which is a rule people keep.
 Add a test when you find yourself explaining a convention twice.
+
+The task declares the repo's `*.kt` and `strings.xml` as its inputs. Without that Gradle calls
+it UP-TO-DATE after any change outside `:archtest`, and a violation introduced in `:app` passes
+locally *and* on a CI runner with a warm cache. If you add a rule that reads a new kind of file,
+add it to that `inputs.files` tree too.
 
 ## Cross-cutting
 
@@ -320,3 +343,4 @@ Add a test when you find yourself explaining a convention twice.
 - **No side effects in constructors** — especially no coroutine launches in `init`.
 - **Impls are `internal`**, to stay unreachable and off the iOS export surface.
 - **Decisions belong to `:domain`.** `:data` never decides anything non-obvious.
+- **`Log`, never `println`.** One filter, one format, one hook for a crash reporter.

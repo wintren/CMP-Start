@@ -6,11 +6,8 @@ import com.template.feature.settings.contract.PreferencesRepository
 import com.template.feature.settings.model.ThemeMode
 
 /**
- * App-wide state: currently only the theme choice.
- *
- * It publishes the [ThemeMode] rather than a resolved `isDark`, because "System" can only be
- * answered inside composition (`isSystemInDarkTheme()`). Resolving it here would mean either a
- * platform call in a ViewModel or a wrong answer.
+ * Publishes [ThemeMode], not a resolved `isDark`: "System" can only be answered inside
+ * composition.
  */
 class AppViewModel(
     private val preferencesRepository: PreferencesRepository,

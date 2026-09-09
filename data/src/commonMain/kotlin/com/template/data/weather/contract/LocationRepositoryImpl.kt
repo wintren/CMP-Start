@@ -8,10 +8,6 @@ import com.template.domain.weather.model.GeoLocation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/**
- * `internal`, and placed in the package that mirrors the interface it implements — that pairing is
- * how you find an impl without a naming convention to remember.
- */
 internal class LocationRepositoryImpl(
     private val savedLocationStore: SavedLocationStore,
 ) : LocationRepository {

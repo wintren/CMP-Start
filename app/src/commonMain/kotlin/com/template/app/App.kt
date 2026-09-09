@@ -20,13 +20,11 @@ import io.ktor.client.HttpClient
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
-/**
- * The single root every platform renders. Each `:launch:<platform>` module starts Koin and calls
- * this — the entry points hold no UI of their own, so a screen can never behave differently on one
- * platform because someone wired it twice.
- */
 @Composable
 fun App() {
+    // Coil has no network fetcher on iOS or wasmJs until this runs.
+    installAppImageLoader(koinInject<HttpClient>())
+
     val appViewModel: AppViewModel = koinViewModel()
     val appState by appViewModel.collectState()
     val navigator: Navigator = koinInject()

@@ -5,10 +5,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-/**
- * Named by role, like [AppColors]. `numeric` exists because tabular figures in a list of
- * measurements need their own style and would otherwise be a one-off `copy()` at each call site.
- */
+/** `numeric` exists because tabular figures would otherwise be a `copy()` at each call site. */
 data class AppTypography(
     val display: TextStyle,
     val title: TextStyle,
@@ -20,10 +17,7 @@ data class AppTypography(
     val numeric: TextStyle,
 )
 
-/**
- * Uses the platform default family. Point this at a bundled font by declaring it in this module's
- * `composeResources/font/` and swapping `FontFamily.Default` for a `FontFamily(Font(...))`.
- */
+/** For a bundled font, declare it in `composeResources/font/` and swap `FontFamily.Default`. */
 fun appTypography(family: FontFamily = FontFamily.Default): AppTypography = AppTypography(
     display = TextStyle(fontFamily = family, fontSize = 34.sp, fontWeight = FontWeight.Bold),
     title = TextStyle(fontFamily = family, fontSize = 24.sp, fontWeight = FontWeight.SemiBold),

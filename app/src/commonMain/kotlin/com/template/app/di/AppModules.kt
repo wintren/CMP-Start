@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 private val uiModule = module {
     single { Navigator() }
-    // The same instance, seen as the narrow interface by everything that only navigates.
+    // The same instance, seen as the narrow interface. Not a second Navigator.
     single<NavControls> { get<Navigator>() }
 
     viewModelOf(::AppViewModel)
@@ -27,10 +27,6 @@ private val uiModule = module {
     }
 }
 
-/**
- * The whole graph, in the order it layers: everything below the UI, this app's UI, then each
- * feature module's own wiring.
- */
 val appModules: List<Module> = buildList {
     addAll(clientModules)
     add(uiModule)

@@ -22,6 +22,7 @@ Delete it and keep the scaffolding.
 | Storage | SQLDelight 2.3.2 (+ multiplatform-settings for preferences) |
 | Images | Coil 3.5.0, on the app's own Ktor client |
 | Localisation | Compose Resources — English, Swedish, Spanish |
+| Logging | `Log` in `:core:common` — lazy messages, per-platform call site and sink |
 | Tests | kotlin-test, coroutines-test, Ktor MockEngine |
 
 No mocking library and no test compiler plugins. Both are Kotlin-version-locked and would gate
@@ -47,7 +48,7 @@ template and then fight.
 ```bash
 ./gradlew check          # everything below
 ./gradlew :archtest:test # architecture rules, as tests
-./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest
+./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest
 ```
 
 What the tests are there to demonstrate, one each:
@@ -60,7 +61,8 @@ What the tests are there to demonstrate, one each:
 | `app/…/BestDayViewModelTest` | a `StateViewModel` with fakes — including the subscription trap |
 | `app/…/AppModulesTest` | the Koin graph really constructs, so a missing binding fails the build |
 | `data/…/SavedLocationMigrationTest` | a v1 database migrated to v2 with its rows intact |
-| `archtest/…` | the layering and design-system rules, enforced rather than documented |
+| `core/…/LogTest` | a filtered log level never invokes the message lambda |
+| `archtest/…` | the layering, design-system and string rules, enforced rather than documented |
 
 ## Make it yours
 

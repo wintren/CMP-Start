@@ -7,10 +7,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
 /**
- * `combine` that yields a destructurable tuple instead of an `Array<Any?>`, so the receiving
- * lambda keeps its types and reads as `state = { (profile, goals, settings) -> ... }`.
- *
- * Always prefer this over `combine`: the array overload erases every type past the first.
+ * Destructurable tuples instead of `Array<Any?>`. Always prefer this over `combine`, whose
+ * array overload erases every type past the first.
  */
 fun <T1> combines(flow1: Flow<T1>): Flow<Tuple1<T1>> =
     flow1.map(::Tuple1)

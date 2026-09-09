@@ -1,6 +1,8 @@
 package com.template.app.weather.forecast
 
 import com.template.app.navigation.NavControls
+import com.template.app.resources.Res
+import com.template.app.resources.error_forecast_refresh_failed
 import com.template.app.weather.forecast.ForecastModels.Action
 import com.template.app.weather.forecast.ForecastModels.CurrentBlock
 import com.template.app.weather.forecast.ForecastModels.DayItem
@@ -14,6 +16,7 @@ import com.template.app.weather.format.label
 import com.template.core.common.flow.combines
 import com.template.core.common.logging.Log
 import com.template.core.ui.resource.StringValue
+import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
 import com.template.core.ui.viewmodel.WithActions
 import com.template.core.ui.viewmodel.fire
@@ -86,7 +89,7 @@ class ForecastViewModel(
         runCatching { forecastRepository.refresh(location) }
             .onFailure { error ->
                 Log.w(TAG) { "Refresh failed: ${error.message}" }
-                local.update { it.copy(error = StringValue.Raw(REFRESH_FAILED)) }
+                local.update { it.copy(error = Res.string.error_forecast_refresh_failed.asValue()) }
             }
     }
 
@@ -115,6 +118,5 @@ class ForecastViewModel(
 
     private companion object {
         const val TAG = "ForecastViewModel"
-        const val REFRESH_FAILED = "Could not refresh this forecast."
     }
 }

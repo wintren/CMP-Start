@@ -21,11 +21,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * The data path end to end, with the network faked at the engine — a `MockEngine`, not a mocked
- * repository, so the request, the JSON, the mapper and the cache are all really exercised.
- *
- * Note there is no mocking library anywhere in this project. Fakes and `MockEngine` cover it, and
- * they do not tie the build to a Kotlin-version-locked compiler plugin.
+ * Faked at the engine with `MockEngine`, not at the repository, so the request, the JSON, the
+ * mapper and the cache are all really exercised.
  */
 class ForecastRepositoryImplTest {
 

@@ -9,9 +9,8 @@ import com.template.app.catalog.AppCatalog
 import com.template.app.di.startAppKoin
 
 /**
- * Second entry point for the same desktop module: `./gradlew :launch:desktop:run -PappCatalog`.
- *
- * Koin still starts, because the catalog shows `AppImage` and that needs the app's HTTP client.
+ * `./gradlew :launch:desktop:run -PappCatalog`. Koin still starts: the catalog shows
+ * `AppImage`, which needs the app's HTTP client.
  */
 fun main() {
     startAppKoin()

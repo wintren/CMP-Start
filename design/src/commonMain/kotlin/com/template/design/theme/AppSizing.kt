@@ -3,13 +3,7 @@ package com.template.design.theme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * Fixed sizes that are not spacing: icon boxes and stroke widths.
- *
- * Named by where the thing sits, like [AppColors] and [AppTypography]. Icons are the case that
- * earns a token set of its own — a screen picking its own `24.dp` is how two lists end up with
- * icons a hair different, and nobody ever notices until a designer does.
- */
+/** Fixed sizes that are not spacing: icon boxes and stroke widths. */
 data class AppSizing(
     /** Sits inline with text, in a button or a chip. */
     val iconInline: Dp = 18.dp,
