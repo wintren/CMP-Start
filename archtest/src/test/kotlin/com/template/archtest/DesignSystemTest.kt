@@ -54,6 +54,23 @@ class DesignSystemTest {
         )
     }
 
+    /**
+     * The window is measured once, in `AppTheme`. A layout reads `AppTheme.windowSize`, or
+     * `AppWindowSize.of(maxWidth)` when what matters is the width of its own pane.
+     */
+    @Test
+    fun `only the theme measures the window`() {
+        val violations = SourceTree.all
+            .filterNot { it.path.startsWith(paletteDirectory) }
+            .filter { source -> source.imports.any { it == "androidx.compose.ui.platform.LocalWindowInfo" } }
+            .map { it.path }
+        assertTrue(
+            violations.isEmpty(),
+            "Read `AppTheme.windowSize`, or `AppWindowSize.of(maxWidth)` inside a " +
+                "BoxWithConstraints:\n${violations.pretty()}",
+        )
+    }
+
     /** A component nobody can see is a component nobody maintains. */
     @Test
     fun `every design component carries a preview`() {

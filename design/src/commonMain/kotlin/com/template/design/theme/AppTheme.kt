@@ -9,20 +9,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 
 private val LocalAppColors = staticCompositionLocalOf<AppColors> { error("No AppTheme provided") }
 private val LocalAppTypography = staticCompositionLocalOf<AppTypography> { error("No AppTheme provided") }
 private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing() }
 private val LocalAppShapes = staticCompositionLocalOf { AppShapes() }
 private val LocalAppSizing = staticCompositionLocalOf { AppSizing() }
+private val LocalAppWindowSize = staticCompositionLocalOf { AppWindowSize.Compact }
 
 /**
  * Wraps [MaterialTheme] rather than replacing it, and feeds it a scheme derived from
  * [AppColors] so a stray M3 component never renders off-palette.
+ *
+ * @param windowSize measured from the window unless a preview or a test pins it.
  */
 @Composable
 fun AppTheme(
     isDark: Boolean = isSystemInDarkTheme(),
+    windowSize: AppWindowSize? = null,
     content: @Composable () -> Unit,
 ) {
     val colors = remember(isDark) { if (isDark) darkAppColors() else lightAppColors() }
@@ -34,6 +40,7 @@ fun AppTheme(
         LocalAppSpacing provides AppSpacing(),
         LocalAppShapes provides AppShapes(),
         LocalAppSizing provides AppSizing(),
+        LocalAppWindowSize provides (windowSize ?: measuredWindowSize()),
     ) {
         MaterialTheme(
             colorScheme = remember(colors) { colors.toMaterialScheme() },
@@ -57,6 +64,15 @@ object AppTheme {
 
     val sizing: AppSizing
         @Composable @ReadOnlyComposable get() = LocalAppSizing.current
+
+    val windowSize: AppWindowSize
+        @Composable @ReadOnlyComposable get() = LocalAppWindowSize.current
+}
+
+@Composable
+private fun measuredWindowSize(): AppWindowSize {
+    val width = LocalWindowInfo.current.containerSize.width
+    return AppWindowSize.of(with(LocalDensity.current) { width.toDp() })
 }
 
 private fun AppColors.toMaterialScheme() = when (isDark) {

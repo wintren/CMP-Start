@@ -3,7 +3,7 @@ package com.template.design.theme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/** Fixed sizes that are not spacing: icon boxes and stroke widths. */
+/** Fixed sizes that are not spacing: icon boxes, stroke widths, pane widths. */
 data class AppSizing(
     /** Sits inline with text, in a button or a chip. */
     val iconInline: Dp = 18.dp,
@@ -15,6 +15,10 @@ data class AppSizing(
     val iconLarge: Dp = 28.dp,
     /** The single illustration in an empty or error state. */
     val iconDisplay: Dp = 44.dp,
+    /** One column of content stops growing here; a wider window gets margins, not longer lines. */
+    val contentMaxWidth: Dp = 720.dp,
+    /** The list pane of a two-pane layout. The detail pane takes what is left. */
+    val listPaneWidth: Dp = 360.dp,
     val border: Dp = 1.dp,
     val borderFocused: Dp = 2.dp,
 )

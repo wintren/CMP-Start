@@ -1,24 +1,25 @@
 package com.template.app
 
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.runtime.Composable
 import com.template.app.navigation.NavTab
 import com.template.design.component.AppText
 import com.template.design.theme.AppTheme
 
+/** The bottom bar's other form, from `Medium` up. Same tabs, same selection. */
 @Composable
-fun AppBottomBar(active: NavTab, onSelect: (NavTab) -> Unit) {
-    NavigationBar(containerColor = AppTheme.colors.surface) {
+fun AppNavigationRail(active: NavTab, onSelect: (NavTab) -> Unit) {
+    NavigationRail(containerColor = AppTheme.colors.surface) {
         NavTab.entries.forEach { tab ->
-            NavigationBarItem(
+            NavigationRailItem(
                 selected = tab == active,
                 onClick = { onSelect(tab) },
                 icon = { Icon(tab.icon, contentDescription = null) },
                 label = { AppText(tab.label, style = AppTheme.typography.label) },
-                colors = NavigationBarItemDefaults.colors(
+                colors = NavigationRailItemDefaults.colors(
                     selectedIconColor = AppTheme.colors.primary,
                     selectedTextColor = AppTheme.colors.primary,
                     unselectedIconColor = AppTheme.colors.textSecondary,

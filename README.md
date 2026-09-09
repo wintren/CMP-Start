@@ -25,6 +25,8 @@ Delete it and keep the scaffolding.
 | Logging | `Log` in `:core:common` — lazy messages, per-platform call site and sink |
 | Config | `config/<env>.properties` → a generated `AppConfig`; secrets stay out of git |
 | Time | an injected `kotlin.time.Clock` + `core/common/time/` |
+| Adaptive UI | `AppTheme.windowSize` — navigation rail, content max width, a two-pane list-detail |
+| Desktop chrome | app-drawn title bar over macOS full-window content, Dock icon and name |
 | Tests | kotlin-test, coroutines-test, Ktor MockEngine |
 
 No mocking library and no test compiler plugins. Both are Kotlin-version-locked and would gate
@@ -41,6 +43,9 @@ every Kotlin upgrade; hand-written fakes (`app/src/commonTest/.../fake/`) and `M
 ```
 
 `-Penv=staging` or `-Penv=prod` on any of these swaps the configuration — see below.
+
+On macOS the desktop window draws its own title bar under the traffic lights; put a
+`desktop_icon.png` in `launch/desktop/src/desktopMain/resources/` to give it a Dock icon.
 
 iOS produces `AppFramework.framework` — add it to an Xcode project and return
 `MainViewControllerKt.MainViewController()` from a `UIViewControllerRepresentable`. There is no
@@ -104,7 +109,9 @@ What the tests are there to demonstrate, one each:
 | `data/…/SavedLocationMigrationTest` | a v1 database migrated to v2 with its rows intact |
 | `core/…/LogTest` | a filtered log level never invokes the message lambda |
 | `core/…/TimeTest` | the date helpers, pinned by a `FixedClock` instead of the machine's date |
-| `archtest/…` | the layering, clock, config, design-system and string rules, enforced rather than documented |
+| `design/…/AppWindowSizeTest` | the breakpoints, including which side of 600 and 840 they fall on |
+| `app/…/ListDetailSceneTest` | when a back stack renders as two panes — the whole adaptive decision |
+| `archtest/…` | the layering, clock, config, window, design-system and string rules, enforced rather than documented |
 
 ## Make it yours
 
@@ -125,12 +132,38 @@ Rewrites the base package (`com.template`), the Gradle root project name, the An
    is installed yet, so the schema can start at version 1 again.
 6. Keep or delete `:feature:settings` — read the note in `docs/architecture.md` first.
 
+## If you fork or duplicate this
+
+Nothing here needs manual setup to build or to go green. `check.yml` reads no secrets, needs no
+permissions block and no self-hosted anything; a clone builds with `./gradlew check` and a
+`local.properties` containing `sdk.dir` (Android Studio writes that on first open).
+
+Three things are worth knowing on GitHub specifically:
+
+1. **A fork starts with Actions disabled.** Open the Actions tab once and confirm the prompt.
+   A repository made with *Use this template*, or an import, already has them on.
+2. **Secrets are not inherited by a fork, and no secret is needed today.** When you add a key that
+   `config/prod.properties` marks `required`, put it in Settings → Secrets → Actions and map it in
+   the workflow step that needs it — the build reads `APP_*` from the environment:
+   ```yaml
+   - name: Release bundle
+     run: ./gradlew :launch:android:bundleRelease -Penv=prod
+     env:
+       APP_API_TOKEN: ${{ secrets.APP_API_TOKEN }}
+   ```
+3. **The `ios` job runs on `macos-latest`,** which bills at ten times the Linux rate on a private
+   repo (public repos are free). It exists to catch Kotlin/Native link errors. If that trade is
+   wrong for you, gate it to `push` on `main` or drop the job — nothing else depends on it.
+
+Branch protection, rulesets, Pages, Dependabot and Renovate are all deliberately absent. Add them
+when your team's workflow asks for them, not because a template shipped them.
+
 ## Layout
 
 ```
 app/                screens, ViewModels, navigation, catalog  (all targets, no artifact)
 launch/android      Application + Activity
-launch/desktop      main() + window
+launch/desktop      main() + window + macOS chrome
 launch/web          main() + index.html
 launch/ios          framework for an Xcode project
 feature/settings    a promoted vertical slice — the worked example

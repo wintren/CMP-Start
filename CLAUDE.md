@@ -77,6 +77,11 @@ part of the job.
     `config/<env>.properties`, read as `AppConfig.<key>`. Adding a key means adding it to all three
     files. Secrets come from `local.properties` or `APP_*` — never from git.
 
+19. **Layout reads a width, not a device.** `AppTheme.windowSize` for the window,
+    `AppWindowSize.of(maxWidth)` inside a `BoxWithConstraints` for a pane. Only `AppTheme` reads
+    `LocalWindowInfo`, and `:archtest` enforces it. The back stack never changes with the window:
+    `listPaneOf()` decides how the last two entries are *rendered*.
+
 ## Verify before you claim done
 
 ```bash

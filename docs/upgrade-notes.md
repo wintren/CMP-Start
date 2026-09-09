@@ -46,6 +46,11 @@ with `android.builtInKotlin=false` in `gradle.properties` — that is the deprec
 **`val desktopMain by getting` is deprecated** in Gradle 9.6+. Use
 `getByName("desktopMain").dependencies { }`.
 
+**`material3-window-size-class` is in the catalog but no longer on any module's classpath** —
+`AppTheme.windowSize` measures `LocalWindowInfo` instead. Nothing resolves it today, so the
+constraint below is dormant; if you never bring it back, `compose-material3` can go to the stable
+1.12.0 and drop the alpha. Verify a build on every target if you try that.
+
 **`material3` and `material3-window-size-class` must sit on the same 1.12 alpha.** window-size-class
 carries a constraint that drags material3 up with it, and a material3 built against foundation 1.11
 throws `AbstractMethodError` on foundation 1.12 the first time an `OutlinedTextField` composes.

@@ -42,6 +42,7 @@ import com.template.design.component.AppTopBarShowcase
 import com.template.design.component.feedback.StateViewsShowcase
 import com.template.design.theme.AppColors
 import com.template.design.theme.AppTheme
+import com.template.design.theme.AppWindowSize
 import io.ktor.client.HttpClient
 import org.koin.compose.koinInject
 
@@ -190,6 +191,18 @@ private fun Swatch(name: String, color: Color) = Column(
     AppText(StringValue.Raw(name), style = AppTheme.typography.label)
 }
 
+/** Resize the window and `windowSize` changes here, which is the fastest way to see a breakpoint. */
+@Composable
+private fun MetricValue(name: String, value: String) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AppText(StringValue.Raw(name), style = AppTheme.typography.label, modifier = Modifier.width(METRIC_LABEL_WIDTH))
+        AppText(StringValue.Raw(value), style = AppTheme.typography.body)
+    }
+}
+
 @Composable
 private fun MetricsSection() {
     val spacing = AppTheme.spacing
@@ -216,6 +229,15 @@ private fun MetricsSection() {
         "border" to sizing.border,
         "borderFocused" to sizing.borderFocused,
     ).forEach { (name, value) -> MetricBar(name, value) }
+
+    SectionHeader("Layout")
+    listOf(
+        "windowSize" to AppTheme.windowSize.name,
+        "mediumFrom" to AppWindowSize.mediumFrom.toString(),
+        "expandedFrom" to AppWindowSize.expandedFrom.toString(),
+        "contentMaxWidth" to sizing.contentMaxWidth.toString(),
+        "listPaneWidth" to sizing.listPaneWidth.toString(),
+    ).forEach { (name, value) -> MetricValue(name, value) }
 
     SectionHeader("Shapes")
     FlowRow(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.lg)) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.template.design.theme.AppTheme
+import com.template.design.theme.AppWindowSize
 
 /**
  * A component rendered outside [AppTheme] reads `LocalAppColors` and throws, so a preview
@@ -16,8 +17,9 @@ import com.template.design.theme.AppTheme
 @Composable
 fun AppPreview(
     isDark: Boolean = false,
+    windowSize: AppWindowSize? = null,
     content: @Composable () -> Unit,
-) = AppTheme(isDark = isDark) {
+) = AppTheme(isDark = isDark, windowSize = windowSize) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

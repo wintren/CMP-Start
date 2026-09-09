@@ -249,6 +249,42 @@ components, and it is never a nav destination, so R8 drops it from a release bui
 `:archtest` fails a component with no preview and no showcase, a hex literal outside
 `design/theme/`, a bare `Text` outside `:design`, and a literal `dp` in a `…Screen.kt`.
 
+## Adaptive layout
+
+`AppTheme.windowSize` is a token like spacing: `Compact` under 600dp, `Medium` under 840dp,
+`Expanded` above. `AppTheme` measures the window once and `:archtest` fails a second reader of
+`LocalWindowInfo`; a preview, a test or the catalog pins it by passing `windowSize`.
+
+**A layout asks about the width it has, not the width of the window.** The window is `Expanded`
+while the 360dp list pane inside it is `Compact`, so a pane reads `AppWindowSize.of(maxWidth)` from
+a `BoxWithConstraints` — see the column count in `BestDayScreen`. Reading `AppTheme.windowSize`
+there would put two columns in a phone-width pane.
+
+The shell in `App.kt` swaps the bottom bar for a navigation rail from `Medium` up, and constrains a
+single pane to `AppTheme.sizing.contentMaxWidth`, so a wide window gets margins instead of
+1600dp-long lines.
+
+**List-detail.** The back stack does not change with the window: a `Forecast` is pushed the same way
+at every size, `listPaneOf()` decides whether the last two entries *render* as two panes, and
+`ListDetailSceneStrategy` — a Navigation 3 `SceneStrategy` — draws them. Resizing in either
+direction is therefore correct with no state to migrate, back from the detail pane empties it, and
+the rail keeps the list's tab selected because the list is still on screen. `NavEntry.key` is
+private, which is why the strategy is handed the destination rather than inspecting entries.
+
+## Window chrome
+
+`App(windowChrome = { … })` is a slot above the app and inside the theme. Only `:launch:desktop`
+fills it, with `AppTitleBar`: on macOS it sets `apple.awt.fullWindowContent`, so the app draws to
+the top of the window and the system floats the traffic lights over its own bar — one bar instead of
+two, which is why the bar starts 84dp in and why the row is a `WindowDraggableArea`. Windows and
+Linux keep their native decoration and get no bar of ours; re-implementing minimise, maximise and
+snap to look bespoke is a bad trade.
+
+The Dock icon, the Dock name and the system light/dark match are three lines in `main()` —
+`apple.awt.application.name`, `apple.awt.application.appearance`, and `java.awt.Taskbar`. The icon
+is read from `desktop_icon.png` on the classpath and skipped when it is absent, so the template
+ships no placeholder art.
+
 ## Logging
 
 `Log` in `:core:common`, never `println`. The message is a lambda, so nothing inside it runs when

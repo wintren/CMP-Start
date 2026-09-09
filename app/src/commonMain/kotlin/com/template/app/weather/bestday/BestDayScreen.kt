@@ -1,14 +1,16 @@
 package com.template.app.weather.bestday
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
@@ -39,6 +41,7 @@ import com.template.design.component.AppTopBar
 import com.template.design.component.feedback.EmptyView
 import com.template.design.component.feedback.ErrorView
 import com.template.design.theme.AppTheme
+import com.template.design.theme.AppWindowSize
 
 @Composable
 fun BestDayScreen(
@@ -85,9 +88,21 @@ fun BestDayScreen(
                 icon = Icons.Default.Star,
             )
 
-            else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-                items(state.ranked, key = { it.key }) { item ->
-                    RankedRow(item) { onAction(Action.OnOpenPlace(it)) }
+            // The pane's own width, not the window's: this list is 360dp wide when it sits
+            // beside a forecast, and two columns would not fit in it.
+            else -> BoxWithConstraints {
+                val columns = when (AppWindowSize.of(maxWidth)) {
+                    AppWindowSize.Expanded -> 2
+                    else -> 1
+                }
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(columns),
+                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                ) {
+                    items(state.ranked, key = { it.key }) { item ->
+                        RankedRow(item) { onAction(Action.OnOpenPlace(it)) }
+                    }
                 }
             }
         }
