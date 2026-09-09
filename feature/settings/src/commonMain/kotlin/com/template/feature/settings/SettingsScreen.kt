@@ -57,17 +57,15 @@ fun SettingsScreen(
     ) {
         ChoiceCard(
             title = Res.string.settings_units.asValue(),
-            options = UnitSystem.entries,
+            options = state.unitOptions,
             selected = state.unitSystem,
-            label = { StringValue.Raw(it.name) },
             onSelect = { onAction(Action.OnUnitSystemChange(it)) },
         )
 
         ChoiceCard(
             title = Res.string.settings_theme.asValue(),
-            options = ThemeMode.entries,
+            options = state.themeOptions,
             selected = state.themeMode,
-            label = { StringValue.Raw(it.name) },
             onSelect = { onAction(Action.OnThemeModeChange(it)) },
         )
 
@@ -85,9 +83,8 @@ fun SettingsScreen(
 @Composable
 private fun <T> ChoiceCard(
     title: StringValue,
-    options: List<T>,
+    options: List<SettingsModels.Option<T>>,
     selected: T,
-    label: (T) -> StringValue,
     onSelect: (T) -> Unit,
 ) = AppCard(modifier = Modifier.fillMaxWidth()) {
     AppText(title, style = AppTheme.typography.heading)
@@ -97,8 +94,11 @@ private fun <T> ChoiceCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                RadioButton(selected = option == selected, onClick = { onSelect(option) })
-                AppText(label(option), style = AppTheme.typography.body)
+                RadioButton(
+                    selected = option.value == selected,
+                    onClick = { onSelect(option.value) },
+                )
+                AppText(option.label, style = AppTheme.typography.body)
             }
         }
     }

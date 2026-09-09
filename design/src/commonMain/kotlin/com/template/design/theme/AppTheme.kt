@@ -14,6 +14,7 @@ private val LocalAppColors = staticCompositionLocalOf<AppColors> { error("No App
 private val LocalAppTypography = staticCompositionLocalOf<AppTypography> { error("No AppTheme provided") }
 private val LocalAppSpacing = staticCompositionLocalOf { AppSpacing() }
 private val LocalAppShapes = staticCompositionLocalOf { AppShapes() }
+private val LocalAppSizing = staticCompositionLocalOf { AppSizing() }
 
 /**
  * Wraps [MaterialTheme] rather than replacing it: M3 still supplies `Scaffold`, ripples, text
@@ -35,6 +36,7 @@ fun AppTheme(
         LocalAppTypography provides typography,
         LocalAppSpacing provides AppSpacing(),
         LocalAppShapes provides AppShapes(),
+        LocalAppSizing provides AppSizing(),
     ) {
         MaterialTheme(
             colorScheme = remember(colors) { colors.toMaterialScheme() },
@@ -55,6 +57,9 @@ object AppTheme {
 
     val shapes: AppShapes
         @Composable @ReadOnlyComposable get() = LocalAppShapes.current
+
+    val sizing: AppSizing
+        @Composable @ReadOnlyComposable get() = LocalAppSizing.current
 }
 
 private fun AppColors.toMaterialScheme() = when (isDark) {

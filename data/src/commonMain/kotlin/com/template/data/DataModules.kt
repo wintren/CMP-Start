@@ -10,4 +10,4 @@ private val infrastructureModule = module {
     single { Json { ignoreUnknownKeys = true; encodeDefaults = true } }
 }
 
-val dataModules = listOf(infrastructureModule, weatherDataModule)
+val dataModules = listOf(infrastructureModule, platformDataModule, weatherDataModule)

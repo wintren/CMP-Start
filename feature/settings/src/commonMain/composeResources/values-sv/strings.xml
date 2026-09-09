@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Inställningar</string>
+    <string name="settings_units">Enheter</string>
+    <string name="settings_theme">Utseende</string>
+    <string name="settings_example">Visas som</string>
+    <string name="settings_units_metric">Metriska</string>
+    <string name="settings_units_imperial">Imperiska</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Ljust</string>
+    <string name="settings_theme_dark">Mörkt</string>
+</resources>

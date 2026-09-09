@@ -26,13 +26,16 @@ kotlin {
     }
 }
 
+// `-PappCatalog` swaps the entry point for the design-system catalog. Same module, same
+// dependencies — a separate `:launch:catalog` module would only duplicate this file.
+val runsCatalog = providers.gradleProperty("appCatalog").isPresent
+
 compose.desktop {
     application {
-        mainClass = "com.template.launch.desktop.MainKt"
-
-        // A ceiling, not a tuning knob: a layout that throws every frame keeps allocating, and
-        // without a cap the JVM takes the machine down before the stack trace is readable.
-        jvmArgs += listOf("-Xmx1g", "-XX:+ExitOnOutOfMemoryError")
+        mainClass = when {
+            runsCatalog -> "com.template.launch.desktop.CatalogMainKt"
+            else -> "com.template.launch.desktop.MainKt"
+        }
 
         // `run` otherwise launches on the machine's default JVM, which fails with
         // UnsupportedClassVersionError whenever that is older than the toolchain we compile against.

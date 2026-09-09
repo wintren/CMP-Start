@@ -1,6 +1,8 @@
 package com.template.app.weather.bestday
 
 import com.template.app.navigation.Destination
+import com.template.app.resources.Res
+import com.template.app.resources.error_refresh_failed
 import com.template.app.navigation.NavControls
 import com.template.app.weather.bestday.BestDayModels.Action
 import com.template.app.weather.bestday.BestDayModels.RankedItem
@@ -10,6 +12,7 @@ import com.template.app.weather.format.asTemperatureValue
 import com.template.core.common.flow.combines
 import com.template.core.common.logging.Log
 import com.template.core.ui.resource.StringValue
+import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
 import com.template.core.ui.viewmodel.WithActions
 import com.template.core.ui.viewmodel.fire
@@ -91,7 +94,7 @@ class BestDayViewModel(
         runCatching { forecastRepository.refreshAll(locationRepository.getSaved()) }
             .onFailure { error ->
                 Log.w(TAG) { "Refresh failed: ${error.message}" }
-                local.update { it.copy(error = StringValue.Raw(REFRESH_FAILED)) }
+                local.update { it.copy(error = Res.string.error_refresh_failed.asValue()) }
             }
         local.update { it.copy(isRefreshing = false) }
     }
@@ -109,6 +112,5 @@ class BestDayViewModel(
 
     private companion object {
         const val TAG = "BestDayViewModel"
-        const val REFRESH_FAILED = "Could not refresh the forecasts."
     }
 }

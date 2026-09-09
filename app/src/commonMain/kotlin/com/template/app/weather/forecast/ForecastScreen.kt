@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.template.app.resources.Res
 import com.template.app.resources.forecast_missing
 import com.template.app.weather.forecast.ForecastModels.Action
@@ -83,7 +82,7 @@ private fun CurrentCard(
             imageVector = current.condition.icon(),
             contentDescription = null,
             tint = AppTheme.colors.accent,
-            modifier = Modifier.size(44.dp),
+            modifier = Modifier.size(AppTheme.sizing.iconDisplay),
         )
         Column(Modifier.weight(1f)) {
             AppText(current.temperature, style = AppTheme.typography.numeric)
@@ -116,7 +115,7 @@ private fun DayRow(day: DayItem) = AppCard(modifier = Modifier.fillMaxWidth()) {
             imageVector = day.condition.icon(),
             contentDescription = null,
             tint = AppTheme.colors.textSecondary,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(AppTheme.sizing.iconSmall),
         )
         Column(horizontalAlignment = Alignment.End, modifier = Modifier.weight(1f)) {
             AppText(day.precipitationChance, style = AppTheme.typography.label, color = AppTheme.colors.primary)

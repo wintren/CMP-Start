@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.template.app.weather.format.label
 import com.template.design.component.AppText
 import com.template.design.theme.AppTheme
@@ -30,8 +29,8 @@ fun PenaltyChips(penalties: List<ComfortPenalty>, modifier: Modifier = Modifier)
                 color = AppTheme.colors.textSecondary,
                 modifier = Modifier
                     .clip(AppTheme.shapes.pill)
-                    .border(1.dp, AppTheme.colors.outline, AppTheme.shapes.pill)
-                    .padding(horizontal = AppTheme.spacing.sm, vertical = 2.dp),
+                    .border(AppTheme.sizing.border, AppTheme.colors.outline, AppTheme.shapes.pill)
+                    .padding(horizontal = AppTheme.spacing.sm, vertical = AppTheme.spacing.xxs),
             )
         }
     }

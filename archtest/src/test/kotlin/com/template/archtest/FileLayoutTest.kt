@@ -16,6 +16,7 @@ class FileLayoutTest {
     fun `a file declaring several top-level types is named after one of them`() {
         val exempt = Regex(""".*(Screen|Models|Theme|Ext|Views|Format|Label|Mapper|Contracts|Tuple|Combines|DI|Modules|SourceTree)\.kt$""")
         val violations = SourceTree.all
+            .asSequence()
             .filterNot { it.path.contains("/commonTest/") || it.path.contains("/src/test/") }
             .filterNot { exempt.matches(it.fileName) }
             .filter { it.topLevelTypeNames.size > 1 }
@@ -23,6 +24,7 @@ class FileLayoutTest {
                 source.fileName.removeSuffix(".kt") in source.topLevelTypeNames
             }
             .map { "${it.path} declares ${it.topLevelTypeNames}" }
+            .toList()
         assertTrue(violations.isEmpty(), "Name the file after its type:\n${violations.pretty()}")
     }
 

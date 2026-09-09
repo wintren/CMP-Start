@@ -16,6 +16,7 @@ import com.template.app.navigation.Navigator
 import com.template.core.ui.viewmodel.collectState
 import com.template.design.theme.AppTheme
 import com.template.feature.settings.model.ThemeMode
+import io.ktor.client.HttpClient
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 

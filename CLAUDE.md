@@ -34,13 +34,21 @@ part of the job.
 7. **`…Service` is a banned name.** Use Repository / UseCase / Source / Client / logic.
 8. **One top-level type per file, named after it.** Exempt: Compose files and `…Models.kt`.
 9. **Design system only.** `com.template.design.*` — `AppText`, `AppButton`, `AppTheme.colors`.
-   No raw `Color(0xFF…)`, no literal `dp` in a screen, no bare `Text`.
-10. **No KDoc that restates the signature.** A comment earns its line by explaining *why*, naming a
+   No `Color(0x…)` outside `design/theme/`, no bare `Text` outside `:design`, and a `…Screen.kt`
+   takes every measurement from `AppTheme.spacing` / `AppTheme.sizing`. A **component** may use a
+   literal `dp` — a chip's 2dp inset is local to it. Icon sizes are always a `sizing` role.
+10. **Every design component has a `@Preview` and a `…Showcase()`.** The preview wraps the
+    showcase in `AppPreview { }`; `app/catalog/AppCatalog.kt` renders the same showcase, so the
+    demo is written once. `:archtest` fails a component that has neither.
+11. **No user-visible `String` in code.** Screens and ViewModels carry `StringValue`; the words
+    live in `composeResources/values*/strings.xml`. `StringValue.Raw` is for text that is already
+    final — a place name, a formatted number — never for a sentence.
+12. **No KDoc that restates the signature.** A comment earns its line by explaining *why*, naming a
     constraint the type cannot express, or recording a decision a reader would otherwise undo.
-11. **Use `combines()`, never `combine()`.** The array overload erases every type past the first.
-12. **No new dependency** without saying what it replaces. Especially no mocking library and no
+13. **Use `combines()`, never `combine()`.** The array overload erases every type past the first.
+14. **No new dependency** without saying what it replaces. Especially no mocking library and no
     compiler plugins — they gate Kotlin upgrades.
-13. **Fix what you touch.** No drive-by refactors.
+15. **Fix what you touch.** No drive-by refactors.
 
 ## Verify before you claim done
 
@@ -50,11 +58,24 @@ part of the job.
 ./gradlew :launch:desktop:compileKotlinDesktop :launch:android:assembleDebug
 ```
 
+`./gradlew :launch:desktop:run -PappCatalog` opens the design-system catalog — every token and
+component in both palettes. Use it after touching `:design`.
+
 `:app:desktopTest` includes `AppModulesTest`, which constructs the whole Koin graph — a missing
 binding is a runtime crash otherwise, and on iOS or wasm it surfaces late.
 
 Non-trivial logic leaves one runnable check behind. Pure logic gets a plain unit test; a data path
 gets `MockEngine`; a ViewModel gets fakes from `app/src/commonTest/.../fake/`.
+
+## Translations
+
+`en` (`values/`), `sv` (`values-sv/`), `es` (`values-es/`) in `:app`, `:design` and
+`:feature:settings`.
+
+**Adding a string means adding it to all three files in the same edit — do that without asking.**
+A best-effort `sv`/`es` translation that a native speaker corrects later beats a missing key that
+falls back to English at runtime and nobody notices. Flag anything genuinely ambiguous (a pun, a
+term of art, a string whose grammar depends on a number) rather than guessing quietly.
 
 ## Naming
 

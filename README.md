@@ -19,7 +19,9 @@ Delete it and keep the scaffolding.
 | Navigation | Navigation 3 (`NavDisplay` + `entryProvider`) |
 | DI | Koin 4.2.2 |
 | Networking | Ktor 3.5.2 + kotlinx.serialization |
-| Storage | multiplatform-settings |
+| Storage | SQLDelight 2.3.2 (+ multiplatform-settings for preferences) |
+| Images | Coil 3.5.0, on the app's own Ktor client |
+| Localisation | Compose Resources — English, Swedish, Spanish |
 | Tests | kotlin-test, coroutines-test, Ktor MockEngine |
 
 No mocking library and no test compiler plugins. Both are Kotlin-version-locked and would gate
@@ -29,6 +31,7 @@ every Kotlin upgrade; hand-written fakes (`app/src/commonTest/.../fake/`) and `M
 
 ```bash
 ./gradlew :launch:desktop:run                  # Desktop
+./gradlew :launch:desktop:run -PappCatalog     # Design-system catalog
 ./gradlew :launch:android:installDebug         # Android
 ./gradlew :launch:web:wasmJsBrowserDevelopmentRun   # Web, at localhost:8081
 ./gradlew :launch:ios:linkDebugFrameworkIosSimulatorArm64   # iOS framework
@@ -56,7 +59,8 @@ What the tests are there to demonstrate, one each:
 | `data/…/ForecastRepositoryImplTest` | the data path end to end with `MockEngine` |
 | `app/…/BestDayViewModelTest` | a `StateViewModel` with fakes — including the subscription trap |
 | `app/…/AppModulesTest` | the Koin graph really constructs, so a missing binding fails the build |
-| `archtest/…` | the layering rules, enforced rather than documented |
+| `data/…/SavedLocationMigrationTest` | a v1 database migrated to v2 with its rows intact |
+| `archtest/…` | the layering and design-system rules, enforced rather than documented |
 
 ## Make it yours
 
@@ -69,25 +73,30 @@ Rewrites the base package (`com.template`), the Gradle root project name, the An
 
 1. Delete the `weather` packages in `:app`, `:domain` and `:data`, and the demo strings.
 2. Point `:data` at your own API, or delete `:data` entirely if you have no backend yet.
-3. Replace the palette in `design/…/theme/AppColors.kt` and the type scale in `AppTypography.kt`.
-4. Keep or delete `:feature:settings` — read the note in `docs/architecture.md` first.
+3. Replace the palette in `design/…/theme/AppColors.kt` and the type scale in `AppTypography.kt`,
+   then check both against `./gradlew :launch:desktop:run -PappCatalog`.
+4. Prune `values*/strings.xml` in `:app` down to what you keep, in all three locales.
+5. Rename the `savedLocation` table in `data/…/sqldelight/` and delete `migrations/1.sqm` — nothing
+   is installed yet, so the schema can start at version 1 again.
+6. Keep or delete `:feature:settings` — read the note in `docs/architecture.md` first.
 
 ## Layout
 
 ```
-app/                screens, ViewModels, navigation   (all targets, no artifact)
+app/                screens, ViewModels, navigation, catalog  (all targets, no artifact)
 launch/android      Application + Activity
 launch/desktop      main() + window
 launch/web          main() + index.html
 launch/ios          framework for an Xcode project
 feature/settings    a promoted vertical slice — the worked example
-design/             theme + components
+design/             theme + components, each with a preview and a showcase
 domain/             models, pure logic, repository contracts
 data/               repository impls, sources, mappers, HTTP
 core/common         combines/tuples, logging, key-value storage
 core/ui             ViewModel base, StringValue
 di/                 aggregation only
 archtest/           the architecture rules, as tests
+.github/workflows   check.yml — the command block above, on every push and PR
 build-logic/        two convention plugins
 ```
 
@@ -105,11 +114,12 @@ Add when you need it, not before:
 
 | Left out | Add when |
 |---|---|
-| SQLDelight | you need queries, partial reads, or more than a few hundred rows |
 | Offline cache | a cold start showing stale data beats showing a spinner |
-| Coil / image loading | you render remote images |
+| A mocking library | never, if you can help it — every KMP one is a KSP processor and would gate each Kotlin bump. Fakes live in `app/src/commonTest/.../fake/` |
+| ktlint / detekt | same reason — both parse with Kotlin compiler internals. `.editorconfig` plus the IDE covers formatting |
 | Paparazzi / screenshot tests | the design system stabilises and regressions start costing you |
 | Crash reporting, analytics | you have users |
 | A Coordinator tier | you have a genuinely app-scoped, non-transient orchestrator |
 | Per-tab back stacks | a tab gains depth worth preserving (see `Navigator`) |
-| CI workflow | you push this to a remote |
+| Release signing, R8 rules | you are actually shipping — nothing here pretends to be release-ready |
+| SQLite on web | the browser driver stops needing an sql.js worker asset and a webpack rule |

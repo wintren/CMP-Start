@@ -75,6 +75,38 @@ Owner of stored data. Dumb verbs: `get` / `observe` / `save` / `delete`.
 - Interface in `:domain/<area>/contract/`, impl in `:data/<area>/contract/` — the impl **mirrors the
   interface's package** and is `internal`.
 
+### Local storage
+
+Two stores, one interface, because the platforms genuinely differ:
+
+- `SqlSavedLocationStore` (`data/src/sqliteMain/`) on Android, iOS and desktop.
+- `JsonSavedLocationStore` (`commonMain`) on wasmJs, which has no SQLite driver worth shipping —
+  the browser one needs an sql.js worker asset and a webpack rule.
+
+The binding is `platformDataModule`, an `expect val Module` with one `actual` per target. That is
+the pattern to copy when something is per-platform but not a one-line `expect fun`: the drivers
+share no constructor, so a Koin module is the narrowest thing that can differ.
+
+Preferences stay on `KeyValueStore` (multiplatform-settings). A handful of scalars is not a
+database, and the settings feature owning its own storage is what keeps it liftable.
+
+**Schema changes.** `SavedLocation.sq` holds the current schema and the queries;
+`migrations/<version>.sqm` holds the route an older database takes to reach it. Bump `version` in
+`data/build.gradle.kts`, add the next `.sqm`, and never edit an old one — it is the only path an
+installed database has. `SavedLocationMigrationTest` builds a v1 database by hand and asserts the
+rows survive, which is the only kind of test that catches a migration that drops data.
+
+The SQL a migration may use is set by the *oldest device that will run it*, not by the dev machine:
+`minSdk = 26` means Android 8's SQLite 3.18, so no `UPSERT` (3.24) and no `RENAME COLUMN` (3.25).
+`migrations/1.sqm` renames a column the long way for exactly that reason.
+
+### Images
+
+`AppImage` in `:design` wraps Coil, with the loading and failure states already decided.
+`installAppImageLoader()` in `:app` builds the singleton `ImageLoader` around **the app's own Ktor
+client**, so there is one HTTP stack in the process — and because Coil has no network fetcher at
+all on iOS or wasmJs without it.
+
 ### Source and Client
 
 `:data`'s boundary workers. Deeper gets dumber.
@@ -182,6 +214,38 @@ Base: `core/ui/.../viewmodel/StateViewModel.kt`. Canonical examples:
 ViewModels put `StringValue` in state, not `String`. A state assertion then compares a resource,
 not an English sentence a translator will change next week. Resolve at the leaf, via `AppText`.
 
+Three locales are wired: `values/` (en), `values-sv/`, `values-es/`, in `:app`, `:design` and
+`:feature:settings`. **A new key goes into all three files in the same commit** — Compose
+Resources falls back to the default silently, so a missing translation looks like a working app.
+
+Where an enum needs a word, map it in a `format/` function (`WeatherCondition.label()`,
+`ActivityProfile.label()`) or put the label in state (`SettingsModels.Option`). Never
+`StringValue.Raw(someEnum.name)`: an enum name is an identifier and translating it is not a
+composable's job.
+
+`StringValue.Raw` is for text that is already final — a place name from the API, a number the
+`format/` layer has already rendered. Not for sentences.
+
+### The design system
+
+`:design` is the only place a colour, a type scale, a corner radius or an icon size is decided.
+`AppTheme.colors` / `.typography` / `.spacing` / `.sizing` / `.shapes` are how you read them.
+
+Every component carries two things:
+
+- `@Preview`-annotated functions wrapping `AppPreview { }`, so it renders in the IDE. Without the
+  wrapper there is no `AppTheme` in scope and the preview throws instead of drawing.
+- a public `<Component>Showcase()` holding the demo — every variant and every state a caller can
+  get wrong. The previews call it, and so does `app/catalog/AppCatalog.kt`, so the demo exists
+  once rather than drifting in two places.
+
+`AppCatalog` (`./gradlew :launch:desktop:run -PappCatalog`) is the whole design system on one
+screen in both palettes. It lives in `:app`, not `:design`, so it can also show app-level
+components, and it is never a nav destination, so R8 drops it from a release build.
+
+`:archtest` fails a component with no preview and no showcase, a hex literal outside
+`design/theme/`, a bare `Text` outside `:design`, and a literal `dp` in a `…Screen.kt`.
+
 ## Errors
 
 **Throw** from `:domain` and `:data`. **Catch in the ViewModel** and map to state. No `Result` or
@@ -204,6 +268,7 @@ why it is the one that catches.
 | `:core:ui`          | ViewModel base, `StringValue`, state collection.                            |
 | `:di`               | Aggregation only, so `:app` never depends on `:data`.                       |
 | `:archtest`         | Source-scanning enforcement of this document.                               |
+| `build-logic/`      | Two convention plugins, as an included build. Compiled at Java 17 — see upgrade-notes. |
 
 Dependencies: `app → domain, design, core, di, feature:*`; `data → domain`; `domain → core:common`.
 The UI lane never touches `:data`.
@@ -241,6 +306,8 @@ the cost: it cannot know the app's navigator, so the host passes `onBack` in
 - a ViewModel that does not use `viewModelState`, or that exposes mutable state
 - a `Screen` taking a ViewModel, or importing a repository or use case
 - a central `di/` package in `:domain` or `:data`
+- a hex colour outside `design/theme/`, a bare `Text` outside `:design`, a literal `dp` in a screen
+- a design component with no `@Preview` or no `…Showcase()`
 
 Text is a coarse tool. It is also a rule you can read in ten lines, which is a rule people keep.
 Add a test when you find yourself explaining a convention twice.

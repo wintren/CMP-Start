@@ -1,0 +1,76 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  # A new push to the same branch cancels the run it superseded.
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Everything that does not need a Mac. This is the job that fails when a rule is broken, so it
+  # runs first and alone — a red :archtest is an answer you want in a minute, not after an Xcode
+  # runner has finished booting.
+  jvm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          # Only the default branch writes the cache; PRs read it. Otherwise every PR fights over
+          # the same entry and none of them get a warm one.
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Architecture rules
+        run: ./gradlew :archtest:test
+
+      - name: Unit tests
+        run: ./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest
+
+      - name: Android
+        run: ./gradlew :launch:android:assembleDebug
+
+      - name: Desktop
+        run: ./gradlew :launch:desktop:compileKotlinDesktop
+
+      - name: Web
+        run: ./gradlew :launch:web:wasmJsBrowserDistribution
+
+      - name: Test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/build/test-results/**/*.xml'
+          if-no-files-found: ignore
+
+  # Linking the iOS framework is the only thing here that needs macOS, and macOS minutes are
+  # billed at ten times the Linux rate. Keep it to exactly that.
+  ios:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: iOS framework
+        run: ./gradlew :launch:ios:linkDebugFrameworkIosSimulatorArm64

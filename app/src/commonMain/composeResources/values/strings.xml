@@ -1,14 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="locations_title">Places</string>
     <string name="locations_search_placeholder">Search for a city</string>
     <string name="locations_empty_title">No places yet</string>
     <string name="locations_empty_body">Search for a city above to start tracking its forecast.</string>
-
     <string name="forecast_title">Forecast</string>
     <string name="forecast_missing">No forecast for this place yet.</string>
-
     <string name="best_day_title">Best day</string>
     <string name="best_day_empty_title">Nothing to rank</string>
     <string name="best_day_empty_body">Add a place and refresh to see which day suits you best.</string>
     <string name="best_day_activity">Planning for</string>
+    <string name="tab_places">Places</string>
+    <string name="tab_best_day">Best day</string>
+    <string name="tab_settings">Settings</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="error_refresh_failed">Could not refresh the forecasts.</string>
+    <string name="day_today">Today</string>
+    <string name="day_tomorrow">Tomorrow</string>
+    <string name="day_and_number">%1$s %2$s</string>
+    <string name="date_full">%1$s %2$s %3$s</string>
+    <string name="weekday_mon">Mon</string>
+    <string name="weekday_tue">Tue</string>
+    <string name="weekday_wed">Wed</string>
+    <string name="weekday_thu">Thu</string>
+    <string name="weekday_fri">Fri</string>
+    <string name="weekday_sat">Sat</string>
+    <string name="weekday_sun">Sun</string>
+    <string name="month_jan">Jan</string>
+    <string name="month_feb">Feb</string>
+    <string name="month_mar">Mar</string>
+    <string name="month_apr">Apr</string>
+    <string name="month_may">May</string>
+    <string name="month_jun">Jun</string>
+    <string name="month_jul">Jul</string>
+    <string name="month_aug">Aug</string>
+    <string name="month_sep">Sep</string>
+    <string name="month_oct">Oct</string>
+    <string name="month_nov">Nov</string>
+    <string name="month_dec">Dec</string>
+    <string name="condition_clear">Clear</string>
+    <string name="condition_partly_cloudy">Partly cloudy</string>
+    <string name="condition_overcast">Overcast</string>
+    <string name="condition_fog">Fog</string>
+    <string name="condition_drizzle">Drizzle</string>
+    <string name="condition_rain">Rain</string>
+    <string name="condition_snow">Snow</string>
+    <string name="condition_thunderstorm">Thunderstorm</string>
+    <string name="condition_unknown">—</string>
+    <string name="penalty_too_cold">Cold</string>
+    <string name="penalty_too_warm">Warm</string>
+    <string name="penalty_windy">Windy</string>
+    <string name="penalty_wet">Wet</string>
+    <string name="penalty_poor_visibility">Low visibility</string>
+    <string name="penalty_storm_risk">Storms</string>
+    <string name="activity_running">Running</string>
+    <string name="activity_cycling">Cycling</string>
+    <string name="activity_picnic">Picnic</string>
 </resources>

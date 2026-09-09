@@ -1,0 +1,27 @@
+-- v1 -> v2: the column shipped as `place_name` and `SavedLocation.sq` now calls it `name`, so a
+-- database created before that rename needs this to keep opening.
+--
+-- Written as a table rebuild rather than `ALTER TABLE ... RENAME COLUMN`, which needs SQLite 3.25.
+-- The dialect here is 3.18, because that is what Android 8 ships and `minSdk` is 26 — the SQL a
+-- migration may use is decided by the *oldest* device that will run it, not by the dev machine.
+-- Bump the dialect in data/build.gradle.kts if you raise minSdk past 30.
+--
+-- The shape every schema change takes: bump `version` in data/build.gradle.kts, add the next
+-- `<version>.sqm`, and never touch the old ones again — they are the only route an existing
+-- database has to the current schema.
+ALTER TABLE savedLocation RENAME TO savedLocation_v1;
+
+CREATE TABLE savedLocation (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    country TEXT,
+    region TEXT,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    time_zone TEXT NOT NULL
+);
+
+INSERT INTO savedLocation(id, name, country, region, latitude, longitude, time_zone)
+SELECT id, place_name, country, region, latitude, longitude, time_zone FROM savedLocation_v1;
+
+DROP TABLE savedLocation_v1;

@@ -21,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.template.app.weather.format.icon
 import com.template.app.weather.locations.LocationsModels.Action
 import com.template.app.weather.locations.LocationsModels.PlaceItem
@@ -37,6 +36,7 @@ import com.template.design.component.feedback.EmptyView
 import com.template.design.component.feedback.ErrorView
 import com.template.design.theme.AppTheme
 import com.template.app.resources.Res
+import com.template.app.resources.action_dismiss
 import com.template.app.resources.locations_empty_body
 import com.template.app.resources.locations_empty_title
 import com.template.app.resources.locations_search_placeholder
@@ -74,7 +74,7 @@ fun LocationsScreen(
             ErrorView(
                 message = message,
                 onRetry = { onAction(Action.OnDismissError) },
-                retryLabel = StringValue.Raw("Dismiss"),
+                retryLabel = Res.string.action_dismiss.asValue(),
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -84,7 +84,7 @@ fun LocationsScreen(
                 Modifier.fillMaxWidth().padding(AppTheme.spacing.lg),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                CircularProgressIndicator(Modifier.size(24.dp), color = AppTheme.colors.primary)
+                CircularProgressIndicator(Modifier.size(AppTheme.sizing.icon), color = AppTheme.colors.primary)
             }
 
             state.showsSearchResults -> LazyColumn(
@@ -151,7 +151,7 @@ private fun SavedRow(item: SavedItem, onOpen: () -> Unit, onRemove: () -> Unit) 
             imageVector = item.condition.icon(),
             contentDescription = null,
             tint = AppTheme.colors.accent,
-            modifier = Modifier.size(28.dp),
+            modifier = Modifier.size(AppTheme.sizing.iconLarge),
         )
         Column(Modifier.weight(1f)) {
             AppText(item.name, style = AppTheme.typography.subtitle)

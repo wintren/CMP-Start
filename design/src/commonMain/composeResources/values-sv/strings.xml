@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_retry">Försök igen</string>
+    <string name="action_clear">Rensa</string>
+    <string name="action_back">Tillbaka</string>
+</resources>

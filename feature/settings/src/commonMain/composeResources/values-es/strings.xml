@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_units">Unidades</string>
+    <string name="settings_theme">Apariencia</string>
+    <string name="settings_example">Se muestra como</string>
+    <string name="settings_units_metric">Métrico</string>
+    <string name="settings_units_imperial">Imperial</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+</resources>

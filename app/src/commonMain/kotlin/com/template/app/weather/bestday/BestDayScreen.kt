@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.template.app.resources.Res
 import com.template.app.resources.best_day_activity
 import com.template.app.resources.best_day_empty_body
@@ -31,6 +30,7 @@ import com.template.app.weather.bestday.BestDayModels.State
 import com.template.app.weather.component.PenaltyChips
 import com.template.app.weather.component.ScoreBadge
 import com.template.app.weather.format.icon
+import com.template.app.weather.format.label
 import com.template.core.ui.resource.StringValue
 import com.template.core.ui.resource.asValue
 import com.template.design.component.AppCard
@@ -71,7 +71,7 @@ fun BestDayScreen(
                 FilterChip(
                     selected = activity == state.activity,
                     onClick = { onAction(Action.OnActivityChange(activity)) },
-                    label = { AppText(StringValue.Raw(activity.name)) },
+                    label = { AppText(activity.label()) },
                 )
             }
         }
@@ -117,7 +117,7 @@ private fun RankedRow(item: RankedItem, onOpen: (Long) -> Unit) = AppCard(
             imageVector = item.condition.icon(),
             contentDescription = null,
             tint = AppTheme.colors.textSecondary,
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(AppTheme.sizing.iconSmall),
         )
         AppText(item.temperature, style = AppTheme.typography.heading)
     }

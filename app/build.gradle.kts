@@ -29,6 +29,10 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.compose.navigation3)
 
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
+            implementation(libs.ktor.client.core)
+
             implementation(libs.bundles.kotlinx)
         }
         androidMain.dependencies { implementation(libs.androidx.activity.compose) }
