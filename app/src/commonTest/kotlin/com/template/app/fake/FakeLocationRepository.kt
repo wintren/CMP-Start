@@ -6,13 +6,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-/**
- * Hand-written fakes, not mocks.
- *
- * A fake is a real implementation with a simple backing store, so a test reads as "given these
- * saved places" instead of a stack of `every { ... } returns ...`. It also survives refactors: add
- * a method to the interface and the compiler tells you, rather than a mock silently returning null.
- */
 class FakeLocationRepository(
     initial: List<GeoLocation> = emptyList(),
 ) : LocationRepository {

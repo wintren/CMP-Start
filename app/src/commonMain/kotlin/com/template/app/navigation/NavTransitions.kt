@@ -16,12 +16,10 @@ private const val DURATION_MS = 260
 private const val ENTER_SCALE = 0.94f
 private const val EXIT_SCALE = 1.06f
 
-/** Forward: the arriving page scales up and fades in over the one it covers. */
 fun <T : Any> AnimatedContentTransitionScope<Scene<T>>.forwardTransition(): ContentTransform =
     (scaleIn(tween(DURATION_MS), initialScale = ENTER_SCALE) + fadeIn(tween(DURATION_MS))) togetherWith
         ExitTransition.None
 
-/** Its mirror, used for both an explicit and a predictive back. */
 fun <T : Any> AnimatedContentTransitionScope<Scene<T>>.backwardTransition(): ContentTransform =
     EnterTransition.None togetherWith
         (scaleOut(tween(DURATION_MS), targetScale = EXIT_SCALE) + fadeOut(tween(DURATION_MS)))

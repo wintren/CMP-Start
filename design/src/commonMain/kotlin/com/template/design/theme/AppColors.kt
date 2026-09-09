@@ -2,13 +2,7 @@ package com.template.design.theme
 
 import androidx.compose.ui.graphics.Color
 
-/**
- * Semantic colours: every entry says what it is *for*, never what it looks like. A component asks
- * for `textSecondary`, not `grey600`, so re-theming is one file and a redesign never greps.
- *
- * Add a role when a component genuinely needs a new one. Reaching for a raw `Color(0xFF...)` inside
- * a component is the smell this type exists to prevent.
- */
+/** Every entry says what it is *for*, never what it looks like, so re-theming is one file. */
 data class AppColors(
     val isDark: Boolean,
     val background: Color,

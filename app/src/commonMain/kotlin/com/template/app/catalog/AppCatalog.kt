@@ -47,18 +47,7 @@ import org.koin.compose.koinInject
 
 /**
  * Every design token and component on one screen, in both palettes.
- *
- * It exists because `@Preview` only renders in an IDE, on one platform, one component at a time.
- * The catalog is the thing you actually look at when changing a colour or a type scale, and it is
- * the fastest way to see a component in every state it has:
- *
- * ```
- * ./gradlew :launch:desktop:run -PappCatalog
- * ```
- *
- * It ships inside `:app` rather than in `:design`, so it can show app-level components too and so
- * `:design` stays free of anything that is not the design system itself. It is never reachable
- * from a nav destination, so R8 strips it from a release build.
+ * `./gradlew :launch:desktop:run -PappCatalog`. Never a nav destination, so R8 drops it.
  */
 @Composable
 fun AppCatalog() {
@@ -169,11 +158,7 @@ private fun ColorsSection(isDark: Boolean) {
     }
 }
 
-/**
- * Listed by hand rather than reflected: `AppColors` is a `data class` and reflection is not free
- * on native or wasm. Adding a role means adding it here, which is a fair price for the catalog
- * never falling out of step silently.
- */
+/** Listed by hand: reflecting a `data class` is not free on native or wasm. */
 private fun AppColors.roles(): List<Pair<String, Color>> = listOf(
     "background" to background,
     "surface" to surface,

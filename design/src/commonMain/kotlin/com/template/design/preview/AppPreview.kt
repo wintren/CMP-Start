@@ -10,11 +10,8 @@ import androidx.compose.ui.Modifier
 import com.template.design.theme.AppTheme
 
 /**
- * The wrapper every `@Preview` in `:design` uses: a component rendered outside [AppTheme] reads
- * `LocalAppColors` and throws, so a preview without this is a preview that never renders.
- *
- * Pass `isDark` to see the other half of the palette. Every component carries at least one
- * preview — see the rule in docs/architecture.md.
+ * A component rendered outside [AppTheme] reads `LocalAppColors` and throws, so a preview
+ * without this wrapper never renders.
  */
 @Composable
 fun AppPreview(

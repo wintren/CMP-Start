@@ -15,11 +15,7 @@ enum class StateFlowMode {
     }
 
     companion object {
-        /**
-         * 5s is Android's ANR threshold: if the last subscriber has been gone that long, the UI
-         * either no longer needs rendering or has already hung, so restarting the upstream costs
-         * nothing. Short enough that a rotation or a tab switch keeps the same state.
-         */
+        /** 5s is Android's ANR threshold, and short enough that a rotation keeps the same state. */
         const val TIME_BEFORE_RESTART = 5_000L
     }
 }

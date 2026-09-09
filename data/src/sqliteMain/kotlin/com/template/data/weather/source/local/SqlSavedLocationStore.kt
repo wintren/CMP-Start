@@ -9,10 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-/**
- * SQLDelight's generated row type stays in here. The interface deals in [SavedLocationEntity], so
- * a schema change is a change to this file and its migration, not to anything that reads the list.
- */
+/** SQLDelight's generated row type stays in here; the interface deals in [SavedLocationEntity]. */
 internal class SqlSavedLocationStore(database: AppDatabase) : SavedLocationStore {
 
     private val queries = database.savedLocationQueries

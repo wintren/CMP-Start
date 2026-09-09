@@ -89,7 +89,6 @@ fun AppButton(
     }
 }
 
-/** Every variant, plus the two states a caller can get wrong: disabled, and with a leading icon. */
 @Composable
 fun AppButtonShowcase() {
     AppButtonVariant.entries.forEach { variant ->

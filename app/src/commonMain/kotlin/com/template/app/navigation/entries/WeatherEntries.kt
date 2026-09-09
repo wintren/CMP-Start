@@ -13,13 +13,6 @@ import com.template.core.ui.viewmodel.collectState
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-/**
- * Navigation entries per area, one file each, so adding a screen never touches a shared switch.
- *
- * Every entry is the same four lines: resolve the ViewModel, collect its state, hand
- * `state` + `onAction` to the screen. That uniformity is the payoff of the ViewModel contract —
- * there is no per-screen wiring to read.
- */
 fun EntryProviderScope<Destination>.weatherEntries() {
 
     entry<Destination.Locations> {

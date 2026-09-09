@@ -3,11 +3,8 @@ package com.template.data.weather.source.local
 import kotlinx.coroutines.flow.Flow
 
 /**
- * The saved list, however this platform can persist it.
- *
- * An interface with an injected implementation rather than `expect`/`actual`, because the two
- * implementations share no shape: [SqlSavedLocationStore] on the three targets with SQLite, and
- * [JsonSavedLocationStore] on wasmJs, which has none. The binding is in `PlatformDataModule`.
+ * An interface with injected impls rather than `expect`/`actual`: [SqlSavedLocationStore] and
+ * [JsonSavedLocationStore] share no shape. Bound in `PlatformDataModule`.
  */
 internal interface SavedLocationStore {
     fun observe(): Flow<List<SavedLocationEntity>>

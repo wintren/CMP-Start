@@ -4,10 +4,7 @@ import com.template.domain.weather.model.ComfortProfile
 import com.template.domain.weather.model.DailyForecast
 import com.template.domain.weather.model.RankedDay
 
-/**
- * Pure: orders days best-first. Ties keep calendar order, so the soonest good day wins — which is
- * what someone asking "when should I go?" means.
- */
+/** Ties keep calendar order, so the soonest good day wins. */
 class RankDaysByComfort(private val scoreDayComfort: ScoreDayComfort) {
 
     operator fun invoke(days: List<DailyForecast>, profile: ComfortProfile): List<RankedDay> =

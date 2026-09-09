@@ -7,11 +7,9 @@ import com.template.domain.weather.model.Forecast
 import kotlinx.datetime.LocalDate
 
 /**
- * The mapping membrane: column-oriented wire arrays in, a list of days out.
- *
- * A day is emitted only when every value it needs is present. Open-Meteo can return a shorter or
- * null-padded array at the edge of its range, and a `DailyForecast` with a fabricated 0.0 in it
- * would score as a perfect day — silently wrong is worse than absent.
+ * A day is emitted only when every value it needs is present. Open-Meteo returns short or
+ * null-padded arrays at the edge of its range, and a fabricated 0.0 would score as a
+ * perfect day.
  */
 internal fun ForecastResponse.toForecast(locationId: Long): Forecast = Forecast(
     locationId = locationId,

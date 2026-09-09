@@ -31,15 +31,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * How to test a `StateViewModel`.
- *
- * `stateFlowMode` defaults to `WhileSubscribed`, so **state is only computed while something
- * collects it**. Collecting on `backgroundScope` for the length of the test is the whole trick — a
- * test that only reads `viewModel.state` without subscribing sees `initialState()` forever, and
- * that confuses everyone exactly once.
- *
- * The real `ScoreDayComfort` and `RankDaysByComfort` are used, not fakes: they are pure, so there
- * is nothing to fake, and the test then covers the actual ranking rule.
+ * `stateFlowMode` is `WhileSubscribed`, so state is only computed while something collects.
+ * Collecting on `backgroundScope` is the trick — a test that only reads `viewModel.state`
+ * sees `initialState()` forever.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class BestDayViewModelTest {
@@ -89,7 +83,7 @@ class BestDayViewModelTest {
         val viewModel = viewModel()
         backgroundScope.subscribe(viewModel)
 
-        // `onStarted` runs once when collection begins — this is what makes it observable.
+        // `onStarted` runs once when collection begins.
         assertEquals(1, forecastRepository.refreshCount)
     }
 

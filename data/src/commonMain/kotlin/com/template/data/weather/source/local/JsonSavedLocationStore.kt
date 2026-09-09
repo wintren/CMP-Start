@@ -7,11 +7,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
 /**
- * The whole list as one JSON blob in the key-value store. Bound on wasmJs only, which has no
- * SQLite — see `PlatformDataModule`.
- *
- * Correct for a handful of rows and nothing more: every read parses the whole list and every write
- * rewrites it.
+ * wasmJs only, which has no SQLite. Every read parses the whole list and every write
+ * rewrites it, so this is correct for a handful of rows and nothing more.
  */
 internal class JsonSavedLocationStore(
     private val keyValueStore: KeyValueStore,

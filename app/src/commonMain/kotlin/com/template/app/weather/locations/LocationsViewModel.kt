@@ -2,6 +2,9 @@ package com.template.app.weather.locations
 
 import com.template.app.navigation.Destination
 import com.template.app.navigation.NavControls
+import com.template.app.resources.Res
+import com.template.app.resources.error_refresh_failed
+import com.template.app.resources.error_search_failed
 import com.template.app.weather.format.asTemperature
 import com.template.app.weather.format.label
 import com.template.app.weather.locations.LocationsModels.Action
@@ -11,6 +14,7 @@ import com.template.app.weather.locations.LocationsModels.State
 import com.template.core.common.flow.combines
 import com.template.core.common.logging.Log
 import com.template.core.ui.resource.StringValue
+import com.template.core.ui.resource.asValue
 import com.template.core.ui.viewmodel.StateViewModel
 import com.template.core.ui.viewmodel.WithActions
 import com.template.core.ui.viewmodel.fire
@@ -19,6 +23,7 @@ import com.template.domain.weather.contract.LocationRepository
 import com.template.domain.weather.contract.PlaceSearchRepository
 import com.template.domain.weather.model.Forecast
 import com.template.domain.weather.model.GeoLocation
+import com.template.domain.weather.model.WeatherCondition
 import com.template.feature.settings.contract.PreferencesRepository
 import com.template.feature.settings.model.UnitSystem
 import kotlinx.coroutines.Job
@@ -26,15 +31,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-/**
- * Note the shape of the local state: **one** `private MutableStateFlow` holding a small [Local]
- * record, not one flow per field.
- *
- * Both this project's reference apps grew ViewModels with eight or nine parallel `MutableStateFlow`
- * properties, and it costs you twice — `combines` runs out of arity, and a single user action
- * that touches three of them emits three times, so the screen recomposes against states that never
- * logically existed. One record updated atomically emits once.
- */
 class LocationsViewModel(
     private val locationRepository: LocationRepository,
     private val forecastRepository: ForecastRepository,
@@ -93,8 +89,7 @@ class LocationsViewModel(
 
     private fun onQueryChanged(query: String) {
         local.update { it.copy(query = query, error = null) }
-        // Restart the debounce on every keystroke: cancelling the previous job is what keeps this
-        // from firing a request per character.
+        // Cancelling the previous job is what keeps this from firing a request per character.
         searchJob?.cancel()
         if (query.isBlank()) {
             local.update { it.copy(searchResults = emptyList(), isSearching = false) }
@@ -110,8 +105,6 @@ class LocationsViewModel(
         searchJob?.cancel()
         searchJob = fire {
             local.update { it.copy(isSearching = true) }
-            // Errors are thrown by `:data` and caught here — the ViewModel is the first layer that
-            // can turn one into something a person can read.
             runCatching { placeSearchRepository.search(query.trim()) }
                 .onSuccess { results ->
                     local.update { it.copy(searchResults = results, isSearching = false) }
@@ -119,7 +112,7 @@ class LocationsViewModel(
                 .onFailure { error ->
                     Log.w(TAG) { "Place search failed: ${error.message}" }
                     local.update {
-                        it.copy(isSearching = false, error = StringValue.Raw(SEARCH_FAILED))
+                        it.copy(isSearching = false, error = Res.string.error_search_failed.asValue())
                     }
                 }
         }
@@ -139,14 +132,14 @@ class LocationsViewModel(
         runCatching { forecastRepository.refreshAll(locationRepository.getSaved()) }
             .onFailure { error ->
                 Log.w(TAG) { "Refresh failed: ${error.message}" }
-                local.update { it.copy(error = StringValue.Raw(REFRESH_FAILED)) }
+                local.update { it.copy(error = Res.string.error_refresh_failed.asValue()) }
             }
         local.update { it.copy(isRefreshing = false) }
     }
 
     private fun refresh(location: GeoLocation) = fire {
         runCatching { forecastRepository.refresh(location) }
-            .onFailure { local.update { state -> state.copy(error = StringValue.Raw(REFRESH_FAILED)) } }
+            .onFailure { local.update { state -> state.copy(error = Res.string.error_refresh_failed.asValue()) } }
     }
 
     private fun GeoLocation.toPlaceItem() = PlaceItem(
@@ -161,13 +154,11 @@ class LocationsViewModel(
         region = StringValue.Raw(listOfNotNull(region, country).joinToString(", ")),
         temperature = forecast?.current?.temperatureC?.asTemperature(units) ?: StringValue.Raw("—"),
         conditionLabel = forecast?.current?.condition?.label() ?: StringValue.Empty,
-        condition = forecast?.current?.condition ?: com.template.domain.weather.model.WeatherCondition.Unknown,
+        condition = forecast?.current?.condition ?: WeatherCondition.Unknown,
     )
 
     private companion object {
         const val SEARCH_DEBOUNCE_MS = 300L
         const val TAG = "LocationsViewModel"
-        const val SEARCH_FAILED = "Could not search right now."
-        const val REFRESH_FAILED = "Could not refresh the forecast."
     }
 }

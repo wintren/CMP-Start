@@ -7,13 +7,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 /**
- * One-shot events, as a rendezvous [Channel] rather than a `SharedFlow`, so nothing is dropped
- * while the screen is away and nothing is replayed when it comes back.
- *
- * A Channel does not support multiple *first* subscribers
- * (https://github.com/Kotlin/kotlinx.coroutines/issues/3002). That is fine here: one ViewModel
- * belongs to one screen. `receiveAsFlow` (not `consumeAsFlow`) is deliberate — the latter cancels
- * the channel on collection, which crashes the second collection after a configuration change.
+ * A rendezvous [Channel], not a `SharedFlow`, so nothing is dropped while the screen is away
+ * and nothing is replayed when it returns.
+ * `receiveAsFlow`, not `consumeAsFlow` — the latter cancels the channel on collection and
+ * crashes the second collection after a configuration change. A Channel supports only one
+ * first subscriber (Kotlin/kotlinx.coroutines#3002), which is fine for one ViewModel.
  */
 class EventDelegate<E>(private val scope: CoroutineScope) {
 

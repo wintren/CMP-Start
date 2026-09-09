@@ -14,10 +14,7 @@ import com.template.core.ui.resource.resolve
 import com.template.design.preview.AppPreview
 import com.template.design.theme.AppTheme
 
-/**
- * The only `Text` a screen should call. Takes a [StringValue] so a ViewModel can put an
- * unresolved, translatable string in its state and the leaf resolves it.
- */
+/** Takes a [StringValue], so a ViewModel can put an unresolved string in state. */
 @Composable
 fun AppText(
     text: StringValue,
@@ -37,7 +34,6 @@ fun AppText(
     textAlign = textAlign,
 )
 
-/** The whole type scale, in the order it steps down. */
 @Composable
 fun AppTextShowcase() {
     val typography = AppTheme.typography

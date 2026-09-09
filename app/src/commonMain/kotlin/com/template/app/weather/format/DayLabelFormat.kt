@@ -31,11 +31,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 
 /**
- * "Today" / "Tomorrow" / "Wed 17", still unresolved. Takes [today] as a parameter instead of
- * reading a clock, so the output is a function of its inputs and a test can pin the date.
- *
- * The weekday and month names are string resources rather than `DayOfWeek.name`: kotlinx-datetime
- * has no locale-aware formatting in common code, and the enum name is English by definition.
+ * Weekday and month names are resources, not `DayOfWeek.name`: kotlinx-datetime has no
+ * locale-aware formatting in common code.
  */
 fun LocalDate.asDayLabel(today: LocalDate): StringValue = when (this) {
     today -> Res.string.day_today.asValue()

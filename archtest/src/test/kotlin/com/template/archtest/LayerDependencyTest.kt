@@ -3,10 +3,7 @@ package com.template.archtest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-/**
- * Call direction. Gradle already blocks most of this, but these tests name the rule, so a violation
- * fails with the reason rather than "unresolved reference".
- */
+/** Gradle blocks most of this already; these name the rule so a violation says why. */
 class LayerDependencyTest {
 
     @Test

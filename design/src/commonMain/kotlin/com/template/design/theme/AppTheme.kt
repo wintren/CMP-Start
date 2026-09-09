@@ -17,11 +17,8 @@ private val LocalAppShapes = staticCompositionLocalOf { AppShapes() }
 private val LocalAppSizing = staticCompositionLocalOf { AppSizing() }
 
 /**
- * Wraps [MaterialTheme] rather than replacing it: M3 still supplies `Scaffold`, ripples, text
- * selection handles and the rest of the plumbing, and it is fed a colour scheme derived from
+ * Wraps [MaterialTheme] rather than replacing it, and feeds it a scheme derived from
  * [AppColors] so a stray M3 component never renders off-palette.
- *
- * Read tokens through the [AppTheme] object — `AppTheme.colors.textSecondary`.
  */
 @Composable
 fun AppTheme(

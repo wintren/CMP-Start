@@ -11,13 +11,6 @@ import com.template.feature.settings.contract.PreferencesRepository
 import com.template.feature.settings.model.ThemeMode
 import com.template.feature.settings.model.UnitSystem
 
-/**
- * The canonical ViewModel shape: `initialState`, one derived `stateFlow`, one `onAction`.
- *
- * Both repository reads here are *simple access* — plain accessors used as-is in state — which is
- * the one case a ViewModel may talk to a repository directly. Wrapping either in a UseCase that
- * only forwarded the call would add a name and nothing else.
- */
 class SettingsViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val onBack: () -> Unit,

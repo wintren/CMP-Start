@@ -10,8 +10,8 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.new
 import org.koin.dsl.module
 
-// AndroidSqliteDriver runs Schema.create and Schema.migrate for us, off the schema version it
-// finds in the file. `androidContext(...)` in the Application is what makes `get<Context>()` work.
+// AndroidSqliteDriver runs Schema.create and Schema.migrate itself, off the file's version.
+// `androidContext(...)` in the Application is what makes `get<Context>()` work.
 actual val platformDataModule: Module = module {
     single<SqlDriver> { AndroidSqliteDriver(AppDatabase.Schema, get<Context>(), DATABASE_NAME) }
     single { AppDatabase(get<SqlDriver>()) }

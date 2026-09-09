@@ -12,7 +12,6 @@ import com.template.design.component.AppText
 import com.template.design.theme.AppTheme
 import com.template.domain.weather.model.ComfortPenalty
 
-/** Why a day scored what it did. Reading the reasons is the point of returning them from `logic`. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PenaltyChips(penalties: List<ComfortPenalty>, modifier: Modifier = Modifier) {

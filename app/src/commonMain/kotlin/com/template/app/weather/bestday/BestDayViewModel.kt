@@ -32,15 +32,8 @@ import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
 /**
- * The screen that earns the `parameters` overload of `viewModelState`.
- *
- * `rankSavedLocationDays(activity)` is a *different flow* per activity. With everything in one
- * `combines`, changing the activity would have to rebuild the whole graph. Putting the activity in
- * `parameters` re-subscribes `data` through `flatMapLatest` instead: pick Cycling and the previous
- * ranking is cancelled and replaced with exactly one emission.
- *
- * Ranking itself is not here. [RankSavedLocationDays] joins two repositories and sequences pure
- * scoring logic — a ViewModel doing that would put a business rule somewhere no test will look.
+ * `rankSavedLocationDays(activity)` is a different flow per activity, so the activity goes in
+ * `parameters` — one change re-subscribes `data` instead of rebuilding the whole graph.
  */
 class BestDayViewModel(
     private val rankSavedLocationDays: RankSavedLocationDays,

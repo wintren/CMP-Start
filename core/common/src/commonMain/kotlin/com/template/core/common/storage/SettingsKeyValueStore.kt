@@ -8,12 +8,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 /**
- * [KeyValueStore] over multiplatform-settings.
- *
- * Reactivity comes from a local revision counter rather than the library's `ObservableSettings`,
- * because observability is not available on every target this project builds for (notably wasmJs).
- * Every write goes through this class, so the counter sees all in-app changes; an edit made by
- * another process would not be observed.
+ * A local revision counter rather than the library's `ObservableSettings`, which has no wasmJs
+ * support. Every write goes through here, so an edit by another process is not observed.
  */
 class SettingsKeyValueStore(private val settings: Settings) : KeyValueStore {
 
@@ -29,6 +25,11 @@ class SettingsKeyValueStore(private val settings: Settings) : KeyValueStore {
         observe { settings.getBoolean(key, default) }
 
     override suspend fun getString(key: String): String? = settings.getStringOrNull(key)
+
+    override suspend fun getInt(key: String, default: Int): Int = settings.getInt(key, default)
+
+    override suspend fun getBoolean(key: String, default: Boolean): Boolean =
+        settings.getBoolean(key, default)
 
     override suspend fun putString(key: String, value: String?) = write {
         if (value == null) settings.remove(key) else settings.putString(key, value)

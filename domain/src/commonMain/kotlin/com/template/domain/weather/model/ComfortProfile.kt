@@ -1,9 +1,6 @@
 package com.template.domain.weather.model
 
-/**
- * What "good weather" means for one activity. The knobs a rule needs, stated as data, so scoring
- * has no per-activity branches in it.
- */
+/** The knobs scoring needs, as data, so it has no per-activity branches. */
 data class ComfortProfile(
     val idealTemperatureC: Double,
     val temperatureToleranceC: Double,

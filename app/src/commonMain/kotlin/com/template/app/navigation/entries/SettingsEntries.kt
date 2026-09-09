@@ -11,10 +11,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-/**
- * The feature module knows nothing about this app's navigation, so the host supplies the one
- * callback it needs. That is the boundary a feature module buys you — and its whole cost.
- */
+/** The feature cannot know this app's navigator, so the host passes `onBack` in. */
 fun EntryProviderScope<Destination>.settingsEntries() {
 
     entry<Destination.Settings> {

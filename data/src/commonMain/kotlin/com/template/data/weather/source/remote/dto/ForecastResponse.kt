@@ -3,10 +3,7 @@ package com.template.data.weather.source.remote.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/**
- * The wire shape, not a model. Open-Meteo returns daily values **column-oriented** — parallel
- * arrays indexed by day — which is exactly the kind of shape a mapper exists to flatten.
- */
+/** Open-Meteo returns daily values column-oriented — parallel arrays indexed by day. */
 @Serializable
 internal data class ForecastResponse(
     val current: CurrentDto? = null,

@@ -8,9 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
- * An impl split from its interface inside the same module lives in `internal/` — see
- * docs/architecture.md. Enum names are stored, not ordinals: reordering the enum must not silently
- * change what everyone's saved preference means.
+ * Enum names are stored, not ordinals: reordering the enum must not silently change what
+ * everyone's saved preference means.
  */
 internal class PreferencesRepositoryImpl(
     private val keyValueStore: KeyValueStore,

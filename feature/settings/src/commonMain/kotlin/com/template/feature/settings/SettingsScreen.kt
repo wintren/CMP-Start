@@ -30,10 +30,6 @@ import com.template.feature.settings.resources.settings_theme
 import com.template.feature.settings.resources.settings_title
 import com.template.feature.settings.resources.settings_units
 
-/**
- * `state` in, `onAction` out. No ViewModel, no Koin, no coroutines — so this renders in a preview
- * and in a screenshot test by constructing a [State].
- */
 @Composable
 fun SettingsScreen(
     state: State,

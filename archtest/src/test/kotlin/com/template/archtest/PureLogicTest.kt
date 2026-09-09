@@ -4,9 +4,8 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * The one property neither a name nor a folder reveals. `logic/` holds both pure logic and
- * UseCases; what separates them is the signature, so these tests police the things purity rules
- * out for *everything* in the tier — no clock, no randomness, no platform.
+ * Purity is the one tier property neither the name nor the folder reveals. `logic/` holds both
+ * pure logic and UseCases, so these police what purity rules out for the whole tier.
  */
 class PureLogicTest {
 

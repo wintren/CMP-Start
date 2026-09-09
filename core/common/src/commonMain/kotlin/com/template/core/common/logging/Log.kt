@@ -1,27 +1,51 @@
 package com.template.core.common.logging
 
-/**
- * Deliberately `println`: it reaches Logcat, stdout, the Xcode console and the browser console with
- * no expect/actual and no dependency.
- *
- * Swap the body for a per-platform logger when you need tags, levels at runtime, or crash
- * reporting — every call site here stays as it is.
- */
 object Log {
-    enum class Level { Verbose, Debug, Info, Warn, Error }
 
-    var minimumLevel: Level = Level.Verbose
+    var minimumLevel: LogLevel = LogLevel.Verbose
 
-    fun v(tag: String, message: () -> String) = log(Level.Verbose, tag, null, message)
-    fun d(tag: String, message: () -> String) = log(Level.Debug, tag, null, message)
-    fun i(tag: String, message: () -> String) = log(Level.Info, tag, null, message)
-    fun w(tag: String, message: () -> String) = log(Level.Warn, tag, null, message)
-    fun e(tag: String, throwable: Throwable? = null, message: () -> String) =
-        log(Level.Error, tag, throwable, message)
+    val isDebug: Boolean get() = minimumLevel <= LogLevel.Debug
 
-    private fun log(level: Level, tag: String, throwable: Throwable?, message: () -> String) {
+    /** Second destination for anything that passes the filter — crash reporter, in-app viewer. */
+    var onLog: ((level: LogLevel, tag: String, message: String, throwable: Throwable?) -> Unit)? = null
+
+    fun v(tag: String? = null, message: () -> String) =
+        log(LogLevel.Verbose, tag, null, message)
+
+    fun d(tag: String? = null, message: () -> String) =
+        log(LogLevel.Debug, tag, null, message)
+
+    fun i(tag: String? = null, message: () -> String) =
+        log(LogLevel.Info, tag, null, message)
+
+    fun w(tag: String? = null, throwable: Throwable? = null, message: () -> String) =
+        log(LogLevel.Warn, tag, throwable, message)
+
+    fun e(tag: String? = null, throwable: Throwable? = null, message: () -> String) =
+        log(LogLevel.Error, tag, throwable, message)
+
+    private fun log(
+        level: LogLevel,
+        tag: String?,
+        throwable: Throwable?,
+        message: () -> String,
+    ) {
         if (level < minimumLevel) return
-        println("${level.name.first()}/$tag: ${message()}")
-        throwable?.let { println("${level.name.first()}/$tag: ${it.stackTraceToString()}") }
+
+        // Both the stack walk and the caller's string stay below the filter.
+        val site = callSite()
+        val text = if (site == null) message() else "$site ${message()}"
+
+        platformLog(level, tag ?: DEFAULT_TAG, text, throwable)
+        onLog?.invoke(level, tag ?: DEFAULT_TAG, text, throwable)
     }
+
+    const val DEFAULT_TAG = "App"
 }
+
+/** Logs `label: format(this)` and returns the receiver, for inspecting a value mid-expression. */
+inline fun <T> T.log(
+    label: String,
+    tag: String? = null,
+    crossinline format: (T) -> String = { it.toString() },
+): T = also { Log.d(tag) { "$label: ${format(it)}" } }

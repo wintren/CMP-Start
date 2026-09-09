@@ -6,12 +6,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Pins `migrations/1.sqm`. Builds the v1 schema by hand — the migration's whole job is to open a
- * database this code no longer knows how to create — then migrates and checks the row came with
- * it. A rename that silently dropped the column would still leave the schema valid, so asserting
- * on the *data* is the point.
- *
- * JVM-only because it needs a real driver; the migration itself is platform-independent SQL.
+ * Builds the v1 schema by hand, because the migration's job is to open a database this code
+ * no longer knows how to create. A rename that dropped the column would still leave the
+ * schema valid, so the assertion is on the data.
  */
 class SavedLocationMigrationTest {
 

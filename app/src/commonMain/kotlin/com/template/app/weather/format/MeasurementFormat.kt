@@ -4,19 +4,13 @@ import com.template.core.ui.resource.StringValue
 import com.template.feature.settings.model.UnitSystem
 import kotlin.math.roundToInt
 
-/**
- * Unit conversion lives here, at the presentation edge, because the domain has exactly one unit
- * system and knows nothing about the user's preference.
- *
- * If these functions were in `:domain`, every rule would have to ask what units its inputs are in —
- * and one that forgot would be wrong in a way no type could catch.
- */
+/** Conversion lives at the presentation edge; the domain has exactly one unit system. */
 fun Double.asTemperature(units: UnitSystem): StringValue = when (units) {
     UnitSystem.Metric -> StringValue.Raw("${roundToInt()}°C")
     UnitSystem.Imperial -> StringValue.Raw("${(this * 9 / 5 + 32).roundToInt()}°F")
 }
 
-/** Without the unit suffix, for a row of numbers where the unit is already in the header. */
+/** Without the unit suffix, for a row where the unit is already in the header. */
 fun Double.asTemperatureValue(units: UnitSystem): StringValue = when (units) {
     UnitSystem.Metric -> StringValue.Raw("${roundToInt()}°")
     UnitSystem.Imperial -> StringValue.Raw("${(this * 9 / 5 + 32).roundToInt()}°")

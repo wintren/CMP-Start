@@ -1,8 +1,8 @@
 package com.template.data.weather.mapper
 
 /**
- * A real Open-Meteo response, captured verbatim from the live endpoint. Trimmed only by removing
- * the `*_units` blocks the parser ignores — the shape, the nulls and the code values are as served.
+ * Captured verbatim from the live endpoint, trimmed only of the `*_units` blocks the parser
+ * ignores — the shape, the nulls and the code values are as served.
  */
 internal const val FORECAST_JSON = """
 {

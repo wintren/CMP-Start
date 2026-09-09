@@ -16,11 +16,6 @@ object LocationsModels {
         val showsSearchResults: Boolean get() = query.isNotBlank()
     }
 
-    /**
-     * A row, already formatted. The screen renders strings; it does not convert units, round
-     * numbers or pick words — every one of those is a decision, and decisions belong upstream where
-     * they can be tested.
-     */
     data class SavedItem(
         val id: Long,
         val name: StringValue,
