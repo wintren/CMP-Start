@@ -148,7 +148,7 @@ class BestDayViewModelTest {
     }
 
     @Test
-    fun `a failed refresh becomes a message in state, not a crash`() = runTest(UnconfinedTestDispatcher()) {
+    fun `a failed refresh becomes a message in state — not a crash`() = runTest(UnconfinedTestDispatcher()) {
         forecastRepository.refreshFailure = IllegalStateException("offline")
         val viewModel = viewModel()
         backgroundScope.subscribe(viewModel)

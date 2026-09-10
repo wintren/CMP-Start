@@ -27,6 +27,7 @@ kotlin {
             implementation(libs.bundles.compose.core)
             implementation(libs.koin.core)
             implementation(libs.kotlinx.browser)
+            implementation(libs.kotlinx.coroutines)
         }
     }
 }

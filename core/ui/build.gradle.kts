@@ -2,6 +2,11 @@ plugins {
     id("kmp-compose-module")
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.template.core.ui.resources"
+}
+
 kotlin {
     sourceSets {
         commonMain.dependencies {

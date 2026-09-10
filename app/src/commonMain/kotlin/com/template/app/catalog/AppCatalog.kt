@@ -34,6 +34,7 @@ import com.template.design.component.AppButton
 import com.template.design.component.AppButtonShowcase
 import com.template.design.component.AppButtonVariant
 import com.template.design.component.AppCardShowcase
+import com.template.design.component.AppIconShowcase
 import com.template.design.component.AppImageShowcase
 import com.template.design.component.AppText
 import com.template.design.component.AppTextFieldShowcase
@@ -287,6 +288,8 @@ private fun ComponentsSection() {
     AppButtonShowcase()
     SectionHeader("AppCard")
     AppCardShowcase()
+    SectionHeader("AppIcon")
+    AppIconShowcase()
     SectionHeader("AppTextField")
     AppTextFieldShowcase()
     SectionHeader("AppTopBar")

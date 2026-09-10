@@ -28,20 +28,24 @@ part of the job.
 4. **The UI lane never imports `:data`.** Repository interfaces live in `:domain`, impls in `:data`,
    `internal`, in the package mirroring the interface.
 5. **Throw in `:domain`/`:data`, catch in the ViewModel.** No `Result`/`Either` wrappers. Never
-   catch `CancellationException`.
+   catch `CancellationException`. `fire(onError = …) { }` is the catch — no `runCatching` in a
+   ViewModel. Transport failures arrive as `AppException`; `Throwable.asMessage()` turns one into
+   words.
 6. **DI lives with the area** (`<area>/<Area>DomainDI.kt`), never in a central `di/`. Constructor
    injection only. `single<Interface> { new(::Impl) }`.
 7. **`…Service` is a banned name.** Use Repository / UseCase / Source / Client / logic.
 8. **One top-level type per file, named after it.** Exempt: Compose files and `…Models.kt`.
-9. **Design system only.** `com.template.design.*` — `AppText`, `AppButton`, `AppTheme.colors`.
-   No `Color(0x…)` outside `design/theme/`, no bare `Text` outside `:design`, and a `…Screen.kt`
+9. **Design system only.** `com.template.design.*` — `AppText`, `AppButton`, `AppIcon`,
+   `AppTheme.colors`. No `Color(0x…)` outside `design/theme/`, no bare `Text` or `Icon` outside
+   `:design`, no `contentDescription` string literal anywhere, and a `…Screen.kt`
    takes every measurement from `AppTheme.spacing` / `AppTheme.sizing`. A **component** may use a
    literal `dp` — a chip's 2dp inset is local to it. Icon sizes are always a `sizing` role.
 10. **Every design component has a `@Preview` and a `…Showcase()`.** The preview wraps the
     showcase in `AppPreview { }`; `app/catalog/AppCatalog.kt` renders the same showcase, so the
     demo is written once. `:archtest` fails a component that has neither.
-11. **No user-visible `String` in code.** Screens and ViewModels carry `StringValue`; the words
-    live in `composeResources/values*/strings.xml`. `StringValue.Raw` is for text that is already
+11. **No user-visible `String` in code** — including a `contentDescription`, which a screen reader
+    reads out. Screens and ViewModels carry `StringValue`; the words live in
+    `composeResources/values*/strings.xml`. `StringValue.Raw` is for text that is already
     final — a place name, a formatted number, a `—` placeholder. `:archtest` fails a key that
     is missing from any locale.
 12. **Comments are noise until proven otherwise.** Default to none. Run all four tests before
@@ -77,7 +81,10 @@ part of the job.
     `config/<env>.properties`, read as `AppConfig.<key>`. Adding a key means adding it to all three
     files. Secrets come from `local.properties` or `APP_*` — never from git.
 
-19. **Layout reads a width, not a device.** `AppTheme.windowSize` for the window,
+19. **A new `Destination` is a new route.** Add it to `Routes.kt` in the same edit: one codec
+    serves the browser URL, Android deep links and the saved session. Only a host calls
+    `Navigator.restore()`.
+20. **Layout reads a width, not a device.** `AppTheme.windowSize` for the window,
     `AppWindowSize.of(maxWidth)` inside a `BoxWithConstraints` for a pane. Only `AppTheme` reads
     `LocalWindowInfo`, and `:archtest` enforces it. The back stack never changes with the window:
     `listPaneOf()` decides how the last two entries are *rendered*.
@@ -86,8 +93,16 @@ part of the job.
 
 ```bash
 ./gradlew :archtest:test                                   # the rules
-./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest
+./gradlew :domain:desktopTest :data:desktopTest :app:desktopTest :core:common:desktopTest :design:desktopTest
 ./gradlew :launch:desktop:compileKotlinDesktop :launch:android:assembleDebug
+```
+
+The same `commonTest` sources run on Kotlin/Native and wasm, and both disagree with the JVM often
+enough to matter — a comma in a test name does not even compile on Native:
+
+```bash
+./gradlew :domain:iosSimulatorArm64Test :core:common:iosSimulatorArm64Test :app:iosSimulatorArm64Test
+./gradlew :domain:wasmJsBrowserTest :core:common:wasmJsBrowserTest :app:wasmJsBrowserTest
 ```
 
 `./gradlew :launch:desktop:run -PappCatalog` opens the design-system catalog — every token and
@@ -101,7 +116,7 @@ gets `MockEngine`; a ViewModel gets fakes from `app/src/commonTest/.../fake/`.
 
 ## Translations
 
-`en` (`values/`), `sv` (`values-sv/`), `es` (`values-es/`) in `:app`, `:design` and
+`en` (`values/`), `sv` (`values-sv/`), `es` (`values-es/`) in `:app`, `:design`, `:core:ui` and
 `:feature:settings`.
 
 **Adding a string means adding it to all three files in the same edit — do that without asking.**

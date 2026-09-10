@@ -14,6 +14,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.SubcomposeAsyncImage
+import com.template.core.ui.resource.StringValue
+import com.template.core.ui.resource.resolve
 import com.template.design.preview.AppPreview
 import com.template.design.theme.AppTheme
 
@@ -24,13 +26,13 @@ import com.template.design.theme.AppTheme
 @Composable
 fun AppImage(
     url: String?,
-    contentDescription: String?,
+    description: StringValue?,
     modifier: Modifier = Modifier,
     shape: Shape = AppTheme.shapes.medium,
     contentScale: ContentScale = ContentScale.Crop,
 ) = SubcomposeAsyncImage(
     model = url,
-    contentDescription = contentDescription,
+    contentDescription = description?.resolve(),
     modifier = modifier.clip(shape),
     contentScale = contentScale,
     loading = { ImagePlaceholder() },
@@ -47,12 +49,12 @@ private fun ImagePlaceholder() = Box(
 fun AppImageShowcase() {
     AppImage(
         url = "https://picsum.photos/seed/cmpstart/600/300",
-        contentDescription = "Example remote image",
+        description = StringValue.Raw("Example remote image"),
         modifier = Modifier.fillMaxWidth().height(WIDE_IMAGE_HEIGHT),
     )
     AppImage(
         url = "https://example.invalid/missing.png",
-        contentDescription = null,
+        description = null,
         modifier = Modifier.size(AVATAR_SIZE),
         shape = AppTheme.shapes.pill,
     )

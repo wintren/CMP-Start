@@ -20,6 +20,15 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- The scheme is the applicationId, so scripts/rename.sh rewrites it with everything
+                 else. `adb shell am start -a android.intent.action.VIEW -d "$scheme://forecast/1"` -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${appLinkScheme}" />
+            </intent-filter>
         </activity>
     </application>
 </manifest>

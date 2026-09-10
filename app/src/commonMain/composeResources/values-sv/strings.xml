@@ -13,9 +13,6 @@
     <string name="tab_best_day">Bästa dagen</string>
     <string name="tab_settings">Inställningar</string>
     <string name="action_dismiss">Stäng</string>
-    <string name="error_refresh_failed">Kunde inte uppdatera prognoserna.</string>
-    <string name="error_forecast_refresh_failed">Kunde inte uppdatera den här prognosen.</string>
-    <string name="error_search_failed">Kunde inte söka just nu.</string>
     <string name="day_today">Idag</string>
     <string name="day_tomorrow">Imorgon</string>
     <string name="day_and_number">%1$s %2$s</string>
@@ -57,4 +54,7 @@
     <string name="activity_running">Löpning</string>
     <string name="activity_cycling">Cykling</string>
     <string name="activity_picnic">Picknick</string>
+    <string name="action_refresh">Uppdatera</string>
+    <string name="action_add_place">Lägg till plats</string>
+    <string name="action_remove_place">Ta bort plats</string>
 </resources>

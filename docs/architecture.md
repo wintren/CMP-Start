@@ -75,6 +75,14 @@ Owner of stored data. Dumb verbs: `get` / `observe` / `save` / `delete`.
 - Interface in `:domain/<area>/contract/`, impl in `:data/<area>/contract/` — the impl **mirrors the
   interface's package** and is `internal`.
 
+### Paging
+
+Nothing here pages, and the first endpoint that returns thousands of rows should not invent its own
+scheme. When it happens: the Source takes the page parameters and returns one page, the Repository
+owns the accumulated list and exposes it as a `Flow`, and the ViewModel's `Local` record holds the
+page cursor and an `isLoadingMore` flag — the same shape as every other piece of local UI state. A
+paging *library* is a dependency to argue about later; this shape does not need one.
+
 ### Local storage
 
 Two stores, one interface, because the platforms genuinely differ:
@@ -324,7 +332,55 @@ clock at all.
 `Either` wrappers in new code. Never catch `CancellationException` — always rethrow.
 
 The ViewModel is the first layer that can turn a failure into something a person can read, which is
-why it is the one that catches.
+why it is the one that catches. Three pieces make that work without repeating it per screen:
+
+**A vocabulary.** `AppException` in `:core:common` — `Offline`, `Timeout`, `Server(status)`,
+`Malformed`. `HttpClientFactory` installs the mapping once, in a `HttpResponseValidator`, so no
+Source has to remember it and the UI lane can tell those cases apart without importing Ktor, which
+`:archtest` forbids it from doing. `HttpRequestRetry` runs before that mapping: `Offline` and
+`Timeout` are retried twice with an exponential delay, `Server` and `Malformed` never are.
+
+**A boundary.** `fire { }` catches, rethrows cancellation, logs at error level — `Log.onLog` is
+where a crash reporter picks it up — and hands `onError` a message. It is the reason a forgotten
+`runCatching` in a background refresh can no longer take the process down. Omit `onError` only when
+the work is genuinely best-effort and the screen has nowhere to put the news.
+
+**The words.** `Throwable.asMessage()` in `:core:ui`, with the strings beside it, so "you are
+offline" is written once for every screen in the app. A screen with something more specific to say
+still says it; the mapping is the floor, not the ceiling.
+
+## Navigation, links and resuming
+
+`Destination` is a sealed interface and the back stack is a `List<Destination>` in `Navigator`.
+Screens only ever call `NavControls` — `navigateTo`, `pop`, `selectTab`. `Navigator.restore()` is
+the host's door, not a screen's: a saved session, or a link somebody opened.
+
+**Every destination is also a route.** `Routes.kt` maps `Destination` to a path segment and back —
+`forecast/42` — and that one codec serves three callers: the browser's address bar, an Android
+deep link, and the back stack written to storage. Adding a destination means adding it there too;
+the `when` in `toRoute()` will not compile until you do.
+
+A URL carries only the destination on top, so a link stays short, and `stackFor()` puts something
+underneath it — a forecast link opens with its list behind it, which also gives it the two-pane
+layout on a wide window for free.
+
+| Host | Mechanism |
+|---|---|
+| Web | `bindBrowserHistory()` writes `location.hash` and listens for `hashchange`, so the browser's back button and a reload both work, and no server rewrite is needed |
+| Android | a `VIEW` intent filter on `<applicationId>://`, read in `MainActivity` before the first composition |
+| Desktop, iOS | nothing yet — a desktop file association or an iOS universal link is a host concern, and both go through the same `destinationOf()` |
+
+**Resuming.** `BackStackStore` writes the stack as routes to the key-value store, and `AppViewModel`
+— the one ViewModel that lives as long as the window — restores it once on start and then persists
+every change. That covers Android process death, a browser reload and a desktop restart with one
+mechanism and no platform APIs. Two rules make it behave: it is skipped when a link has already
+moved us (`Navigator.isAtStart`), and a save older than thirty minutes is ignored, because resuming
+is a courtesy and reopening three screens deep into last week's work is not.
+
+**A screen's local state is deliberately not restored.** A `Local` record is transient; if something
+must survive a restart it is a preference or it belongs in a repository, and both already persist.
+That is a decision, not an omission — the alternative is serializing every screen's UI state and
+maintaining that forever.
 
 ## Modules
 
@@ -337,7 +393,7 @@ why it is the one that catches.
 | `:domain`           | Pure business layer. No Compose, no Android, no `:data`.                    |
 | `:data`             | Repository impls, Sources, Clients, mappers.                                |
 | `:core:common`      | Flows/`combines`, logging, time, `AppConfig`, key-value storage. No Compose. |
-| `:core:ui`          | ViewModel base, `StringValue`, state collection.                            |
+| `:core:ui`          | ViewModel base, `StringValue`, state collection, the generic failure strings. |
 | `:di`               | Aggregation only, so `:app` never depends on `:data`.                       |
 | `:archtest`         | Source-scanning enforcement of this document.                               |
 | `build-logic/`      | Two convention plugins, as an included build. Compiled at Java 17 — see upgrade-notes. |
@@ -378,7 +434,8 @@ the cost: it cannot know the app's navigator, so the host passes `onBack` in
 - a ViewModel that does not use `viewModelState`, or that exposes mutable state
 - a `Screen` taking a ViewModel, or importing a repository or use case
 - a central `di/` package in `:domain` or `:data`
-- a hex colour outside `design/theme/`, a bare `Text` outside `:design`, a literal `dp` in a screen
+- a hex colour outside `design/theme/`, a bare `Text` or `Icon` outside `:design`, a literal `dp` in a screen
+- a `contentDescription` written as a string literal anywhere
 - a design component with no `@Preview` or no `…Showcase()`
 - a string key present in `values/` but missing from `values-sv/` or `values-es/`, or vice versa
 - a config key declared in one `config/<env>.properties` and not in the others

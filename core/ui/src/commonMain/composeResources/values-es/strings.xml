@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_offline">Sin conexión. Comprueba tu red e inténtalo de nuevo.</string>
+    <string name="error_timeout">Ha tardado demasiado. Inténtalo de nuevo.</string>
+    <string name="error_server">Algo ha ido mal por nuestra parte. Inténtalo de nuevo en unos instantes.</string>
+    <string name="error_unexpected">Algo ha ido mal.</string>
+</resources>
